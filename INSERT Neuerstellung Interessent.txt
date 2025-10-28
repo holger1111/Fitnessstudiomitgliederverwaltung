@@ -65,6 +65,20 @@ INSERT INTO Ort (PLZ, Ort)
 		END
 );
 
+--Ggf OrtID updaten--
+
+UPDATE Mitglieder AS m
+	SET
+		m.OrtID = (
+			SELECT o.OrtID
+			FROM Ort AS o
+			WHERE o.Ort = ?			--Ortname--
+			)
+			WHERE m.Vorname = ?		--Vorname--
+			AND m.Nachname = ?		--Nachname--
+			AND m.Geburtsdatum = ?;		--Geburtsdatum--
+
+
 --Schließe die Interessentenerstellung erfolgreich ab--
 
 COMMIT;
