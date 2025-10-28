@@ -8,7 +8,7 @@ SELECT Vorname, Nachname
 	FROM Mitglieder
 	WHERE MitgliederID = ?;	--MitgliederID des Kunden--
 
---Frage Kurstermin ab-- --Speicherung der KursterminID--
+--Frage Kurstermin ab-- --Speicherung der KursterminID von ausgewähltem Kurs--
 
 SELECT k.Bezeichnung, kt.KursterminID, kt.Termin, kt.Teilnehmerfrei, k.Teilnehmerzahl, kt.Anmeldbar, k.Kostenfrei
 	FROM Kurstermine AS kt
@@ -43,8 +43,6 @@ UPDATE Kurstermin
 		ELSE Anmeldbar
 	END
 	WHERE KursterminID = ?;
-
-
 
 --Schließe die Kursanmeldung erfolgreich ab--
 
