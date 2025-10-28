@@ -86,3 +86,4 @@ COMMIT;
 --Anzeigen des gerade erstellten Interessenten--
 
 SELECT * FROM Mitglieder WHERE MitgliederID = LAST_INSERT_ID();
+
