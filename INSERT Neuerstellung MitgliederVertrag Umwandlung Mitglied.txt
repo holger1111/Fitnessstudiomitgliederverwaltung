@@ -3,7 +3,7 @@ Umwandlung Interessenten zu Mitgliedern:
 
 START TRANSACTION;		--ROLLBACK; immer zwischendrin als Option zum Abbrechen einbauen--
 
---Prüfe, ob Person bereits vorhanden--
+--Prüfe Person sowie Speicherung MitgliederID--
 
 SELECT MitgliederID, Vorname, Nachname, Geburtsdatum, Aktiv
 	FROM Mitglieder
@@ -16,7 +16,8 @@ SELECT MitgliederID, Vorname, Nachname, Geburtsdatum, Aktiv
 INSERT INTO MitgliederVertrag
 	VALUES
 		(
-		NULL,				--MitgliederVertragID--
+		NULL,
+		?,				--MitgliederID--
 		(
 			SELECT VertragID
 				FROM Vertrag
@@ -63,4 +64,8 @@ UPDATE Mitglieder AS m
 				) THEN 1
 				ELSE 0
 		END
-		WHERE m.MitgliederID = ?;
+		WHERE m.MitgliederID = ?;	--MitgliederID--
+
+--Schließe die Umwandlung zum Mitglied sowie Anlage Mitgliedsvertrag ab--
+
+COMMIT;
