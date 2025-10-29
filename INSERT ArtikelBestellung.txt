@@ -1,26 +1,26 @@
-Kauf Artikel:
+-- Kauf Artikel:
 
-START TRANSACTION;		--ROLLBACK; immer zwischendrin als Option zum Abbrechen einbauen--
+START TRANSACTION;		-- ROLLBACK; immer zwischendrin als Option zum Abbrechen einbauen
 
---Prüfe MitgliederID-- --Danach Speicherung der MitgliederID für den laufenden Prozess--
+-- Prüfe MitgliederID-- --Danach Speicherung der MitgliederID für den laufenden Prozess
 
 SELECT Vorname, Nachname
 	FROM Mitglieder
-	WHERE MitgliederID = ?;	--MitgliederID des Kunden--
+	WHERE MitgliederID = ?;	-- MitgliederID des Kunden
 
 
---Erstellung der Bestellung--
+-- Erstellung der Bestellung
 
 INSERT INTO Bestellung
 	VALUES (
-		NULL,			-- BestellID Auto_Increment--
-		00.00,			-- Gesamtpreis in Euro--
-		CURRENT_TIMESTAMP,	-- Timestamp--
-		?,			-- MitgliederID des Kunden--
-		3			-- Zahlungsart, noch nicht festgelegt--
+		NULL,			-- BestellID Auto_Increment
+		00.00,			-- Gesamtpreis in Euro
+		CURRENT_TIMESTAMP,	-- Timestamp
+		?,			-- MitgliederID des Kunden
+		3			-- Zahlungsart, noch nicht festgelegt
 );			
 
---Speicherung der BestellungID für den laufenden Bestellprozess--
+-- Speicherung der BestellungID für den laufenden Bestellprozess
 
 SELECT BestellungID
 	FROM Bestellung AS b
@@ -32,17 +32,17 @@ SELECT BestellungID
 				ORDER BY BestellungID DESC
 				LIMIT 1);
 
---Eingabe der Artikel, so oft wiederholen, bis alle Artikel eingegeben sind--
+-- Eingabe der Artikel, so oft wiederholen, bis alle Artikel eingegeben sind
 
 INSERT INTO ArtikelBestellung (BestellungID, ArtikelID, Menge, Aufaddiert)
 	VALUES (
 		?,	--BestellungID--
 		?,	--ArtikelID--
 		?,	--Menge--
-		? * (SELECT Einzelpreis FROM Artikel WHERE ArtikelID = ?)	--Menge und ArtikelID--
+		? * (SELECT Einzelpreis FROM Artikel WHERE ArtikelID = ?)	-- Menge und ArtikelID
 );
 
---Berechnung Gesamtpreis, wenn alle Artikel eingegeben sind--
+-- Berechnung Gesamtpreis, wenn alle Artikel eingegeben sind
 
 UPDATE Bestellung AS b
 	SET Gesamtpreis = (
@@ -50,9 +50,9 @@ UPDATE Bestellung AS b
 			FROM ArtikelBestellung AS ab
 			WHERE ab.BestellungID = b.BestellungID
 			)
-			WHERE b.BestellungID = ?;	--BestellID--
+			WHERE b.BestellungID = ?;	-- BestellID
 
---Zeige alle Artikel sowie den Gesamtpreis an--
+-- Zeige alle Artikel sowie den Gesamtpreis an
 
 SELECT a.Name, a.Einzelpreis, ab.Menge
 	FROM Artikel AS a
@@ -60,24 +60,24 @@ SELECT a.Name, a.Einzelpreis, ab.Menge
 	ON ab.ArtikelID = a.ArtikelID
 	JOIN Bestellung AS b
 	ON b.BestellungID = ab.BestellungID
-	WHERE b.BestellungID = ?;	--BestellID--
+	WHERE b.BestellungID = ?;	-- BestellID
 
 SELECT Gesamtpreis
 	FROM Bestellung AS b
-	WHERE BestellungID = ?;	--BestellID--
+	WHERE BestellungID = ?;	-- BestellID
 
---Gib Zahlungsart ein--
+-- Gib Zahlungsart ein
 
 UPDATE Bestellung
-	SET ZahlungID = ?		--ZahlungID--
-	WHERE BestellungID = ?;		--BestellID--
+	SET ZahlungID = ?		-- ZahlungID
+	WHERE BestellungID = ?;		-- BestellID
 
---Update Timestamp--
+-- Update Timestamp
 
 UPDATE Bestellung
 	SET Bestelldatum = CURRENT_TIMESTAMP
-	WHERE BestellungID = ?;		--BestellID--
+	WHERE BestellungID = ?;		-- BestellID
 
---Schließe die Bestellung erfolgreich ab--
+-- Schließe die Bestellung erfolgreich ab
 
 COMMIT;

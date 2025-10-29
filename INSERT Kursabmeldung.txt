@@ -1,14 +1,14 @@
-Abmeldung Kurs:
+-- Abmeldung Kurs:
 
-START TRANSACTION;		--ROLLBACK; immer zwischendrin als Option zum Abbrechen einbauen--
+START TRANSACTION;		-- ROLLBACK; immer zwischendrin als Option zum Abbrechen einbauen
 
---Prüfe MitgliederID-- --Danach Speicherung der MitgliederID für den laufenden Prozess--
+-- Prüfe MitgliederID  Danach Speicherung der MitgliederID für den laufenden Prozess
 
 SELECT Vorname, Nachname
 	FROM Mitglieder
-	WHERE MitgliederID = ?;	--MitgliederID des Kunden--
+	WHERE MitgliederID = ?;	-- MitgliederID des Kunden
 
---Frage angemeldete Kursteilnahme ab--
+-- Frage angemeldete Kursteilnahme ab
 
 SELECT k.Bezeichnung, kt.KursterminID, kt.Termin, kte.Kommentar
 	FROM Kursteilnahme AS kte
@@ -16,10 +16,10 @@ SELECT k.Bezeichnung, kt.KursterminID, kt.Termin, kte.Kommentar
 	ON kt.KursterminID = kte.KursterminID
 	JOIN Kurs AS k
 	ON k.KursID = kt.KursID
-	WHERE kte.MitgliederID = ?		--MitgliederID--
+	WHERE kte.MitgliederID = ?		-- MitgliederID
 	ORDER BY kte.KursterminID ASC;
 
---Speichert ausgewählte KursterminID--
+-- Speichert ausgewählte KursterminID
 
 UPDATE Kursteilnahme
 	SET
@@ -27,10 +27,10 @@ UPDATE Kursteilnahme
 		Abgemeldet = 1,
 		Abmeldezeit = CURRENT_TIME,
 		Kommentar = "Abgemeldet"
-			WHERE MitgliederID = ?		--MitgliederID--
-			AND KurstterminID = ?;		--KursterminID--
+			WHERE MitgliederID = ?		-- MitgliederID
+			AND KurstterminID = ?;		-- KursterminID
 
---Update freie Kursplätze--
+-- Update freie Kursplätze
 
 UPDATE Kurstermin
 	SET	Anmeldbar = CASE
@@ -40,6 +40,6 @@ UPDATE Kurstermin
 		Teilnehmerfrei =  Teilnehmerfrei + 1
 	WHERE KursterminID = ?;
 		
---Schließe die Kursanmeldung erfolgreich ab--
+-- Schließe die Kursanmeldung erfolgreich ab
 
 COMMIT;

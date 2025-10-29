@@ -1,58 +1,57 @@
-Erstellung neuer MitgliederVertrag mit
-Umwandlung Interessenten zu Mitgliedern:
+-- Erstellung neuer MitgliederVertrag mit Umwandlung Interessenten zu Mitgliedern:
 
-START TRANSACTION;		--ROLLBACK; immer zwischendrin als Option zum Abbrechen einbauen--
+START TRANSACTION;		-- ROLLBACK; immer zwischendrin als Option zum Abbrechen einbauen
 
---Prüfe Person sowie Speicherung MitgliederID--
+-- Prüfe Person sowie Speicherung MitgliederID
 
 SELECT MitgliederID, Vorname, Nachname, Geburtsdatum, Aktiv
 	FROM Mitglieder
-	WHERE Vorname LIKE CONCAT("%", ?, "%")	--Vorname LIKE--
-	AND Nachname LIKE CONCAT("%", ?, "%")	--Nachname LIKE--
-	AND Geburtsdatum LIKE CONCAT(?, "%");	--Geburtsjahr--
+	WHERE Vorname LIKE CONCAT("%", ?, "%")	-- Vorname LIKE
+	AND Nachname LIKE CONCAT("%", ?, "%")	-- Nachname LIKE
+	AND Geburtsdatum LIKE CONCAT(?, "%");	-- Geburtsjahr
 
---Erstellung MitgliederVertrag--
+-- Erstellung MitgliederVertrag
 
 INSERT INTO MitgliederVertrag
 	VALUES
 		(
 		NULL,
-		?,				--MitgliederID--
+		?,				-- MitgliederID
 		(
 			SELECT VertragID
 				FROM Vertrag
-					WHERE Bezeichnung = ?	--Bezeichnung--
+					WHERE Bezeichnung = ?	-- Bezeichnung
 					LIMIT 1
 		),
-		?,				--Vertragsbeginn DATE--
-		?,				--Vertragsende DATE--
-		0,				--Verlängerung BOOLEAN--
+		?,				-- Vertragsbeginn DATE
+		?,				-- Vertragsende DATE
+		0,				-- Verlängerung BOOLEAN
 		CASE
 		    WHEN CURRENT_DATE <= Trainingsbeginn THEN 1
 		    ELSE 0
 		END,
 		0,
-		?,				--Preisrabatt DECIMAL(6.2)--
+		?,				-- Preisrabatt DECIMAL(6.2)
 		(
 			SELECT IntervallID
 				FROM Intervall
-					WHERE Zahlungsintervall = ?  --Zahlungsintervall VARCHAR(20)--
+					WHERE Zahlungsintervall = ?  -- Zahlungsintervall VARCHAR(20)
 					LIMIT 1
 		),
 		(
 			SELECT ZahlungID
 				FROM Zahlung
-					WHERE Zahlungsart = ?		--Zahlungsart VARCHAR(255)--
+					WHERE Zahlungsart = ?		-- Zahlungsart VARCHAR(255)
 					LIMIT 1
 		),
-		?,				--Trainingsbeginn DATE--
+		?,				-- Trainingsbeginn DATE
 		CASE
-		    WHEN ? IS NOT NULL THEN ?	--Kommentar TEXT--
+		    WHEN ? IS NOT NULL THEN ?	-- Kommentar TEXT
 		    ELSE NULL
 		END
 );
 
---Umwandlung zu aktivem Mitglied--
+-- Umwandlung zu aktivem Mitglied
 
 UPDATE Mitglieder AS m
 	SET m.Aktiv = CASE
@@ -64,8 +63,8 @@ UPDATE Mitglieder AS m
 				) THEN 1
 				ELSE 0
 		END
-		WHERE m.MitgliederID = ?;	--MitgliederID--
+		WHERE m.MitgliederID = ?;	-- MitgliederID
 
---Schließe die Umwandlung zum Mitglied sowie Anlage Mitgliedsvertrag ab--
+-- Schließe die Umwandlung zum Mitglied sowie Anlage Mitgliedsvertrag ab
 
 COMMIT;
