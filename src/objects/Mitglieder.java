@@ -7,10 +7,7 @@ import java.util.Objects;
 import helper.Datum;
 
 public class Mitglieder extends Interessent {
-	
-//	private Ort ort;
-//	private Zahlungsdaten zahlungsdaten;
-	
+
 	// Attribute
 
 	private final LocalDate geburtsdatum;
@@ -21,8 +18,9 @@ public class Mitglieder extends Interessent {
 	private int zahlungsdatenid;
 
 	// Konstruktor
-	
-	public Mitglieder(int mitgliederid, String vorname, String nachname, LocalDate geburtsdatum, boolean aktiv, String strasse, String hausnr, int ortid, int zahlungsdatenid, String telefon, String mail) {
+
+	public Mitglieder(int mitgliederid, String vorname, String nachname, LocalDate geburtsdatum, boolean aktiv,
+			String strasse, String hausnr, int ortid, int zahlungsdatenid, String telefon, String mail) {
 		super(mitgliederid, vorname, nachname, telefon, mail);
 		this.geburtsdatum = geburtsdatum;
 		this.aktiv = aktiv;
@@ -31,31 +29,33 @@ public class Mitglieder extends Interessent {
 		this.ortid = ortid;
 		this.zahlungsdatenid = zahlungsdatenid;
 	}
-	
-	public Mitglieder(int mitgliederid, String vorname, String nachname, int tag, int monat, int jahr, String strasse, String hausnr, String PLZ, String ort, String name, String IBAN, String BIC, String telefon, String mail) {
+
+	public Mitglieder(int mitgliederid, String vorname, String nachname, int tag, int monat, int jahr, String strasse,
+			String hausnr, String PLZ, String ort, String name, String IBAN, String BIC, String telefon, String mail) {
 		super(mitgliederid, vorname, nachname, telefon, mail);
 		if (Datum.testeDatum(tag, monat, jahr)) {
 			this.geburtsdatum = LocalDate.of(jahr, monat, tag);
 		} else {
-				throw new DateTimeException("Ungültiges Datum");
+			throw new DateTimeException("Ungültiges Datum");
 		}
 		this.aktiv = true;
 		this.strasse = strasse;
 		this.hausnr = hausnr;
 		try {
 			this.ortid = Ort.getOrtID(PLZ, ort);
-		} catch (PlaceNotFoundException e) {	// TODO: PlaceNotFoundException erstellen
+		} catch (PlaceNotFoundException e) { // TODO: PlaceNotFoundException erstellen
 			Ort neuerOrt = new Ort(PLZ, ort);
 			this.ortid = neuerOrt.getOrtID();
 		}
 		try {
 			this.zahlungsdatenid = Zahlungsdaten.getZahlungsdatenID(name, IBAN, BIC);
-		} catch (PaymentDetailsException e) {	// TODO: PaymentDetailsException erstellen
+		} catch (PaymentDetailsException e) { // TODO: PaymentDetailsException erstellen
 			Zahlungsdaten neueZahlungsdaten = new Zahlungsdaten(name, IBAN, BIC);
 			this.zahlungsdatenid = neueZahlungsdaten.getZahlungsdatenID();
 		}
-			
+
 	}
+
 	// Setter & Getter
 	public void setAktiv(boolean aktiv) {
 		this.aktiv = aktiv;
@@ -64,7 +64,7 @@ public class Mitglieder extends Interessent {
 	public LocalDate getGeburtsdatum() {
 		return geburtsdatum;
 	}
-	
+
 	public boolean isAktiv() {
 		return aktiv;
 	}
@@ -92,7 +92,7 @@ public class Mitglieder extends Interessent {
 	public void setOrtID(int ortid) {
 		this.ortid = ortid;
 	}
-	
+
 	public int getZahlungsdatenID() {
 		return zahlungsdatenid;
 	}
@@ -103,27 +103,27 @@ public class Mitglieder extends Interessent {
 
 	// Override
 
-//	@Override
-//	public String toString() {
-//		return "\nName: " + vorname + " " + nachname + "\nTelefon: " + telefon + "\n";
-//	}
-//
-//	@Override
-//	public int hashCode() {
-//		return Objects.hash(vorname, nachname, telefon);
-//	}
+	@Override
+	public String toString() {
+		return "\nName: " + getVorname() + " " + getNachname() + "\nTelefon: " + getTelefon() + "\n";
+	}
 
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		Mitglieder other = (Mitglieder) obj;
-//		return Objects.equals(other.vorname, vorname) && Objects.equals(other.nachname, nachname)
-//				&& Objects.equals(other.telefon, telefon);
-//	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(getVorname(), getNachname(), getTelefon());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Mitglieder other = (Mitglieder) obj;
+		return Objects.equals(other.getVorname(), getVorname()) && Objects.equals(other.getNachname(), getNachname())
+				&& Objects.equals(other.getTelefon(), getTelefon());
+	}
 
 }

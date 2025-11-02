@@ -1,10 +1,8 @@
 package daos;
 
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.ResultSet;
+import objects.Vertrag;
+
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class VertragDAO extends DAO {
@@ -35,6 +33,25 @@ public class VertragDAO extends DAO {
 				int laufzeit = rs.getInt("Laufzeit");
 				double grundpreis = rs.getDouble("Grundpreis");
 				return new Vertrag(vertragid, bezeichnung, laufzeit, grundpreis);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	public Vertrag findByBezeichnungLaufzeit(String bezeichnung, int laufzeit) {
+		String sql = "SELECT VertragID, Bezeichnung, Laufzeit, Grundpreis FROM Vertrag WHERE Bezeichnung = ? AND Laufzeit = ?";
+		ArrayList<Vertrag> list = getResults(sql, new Object[]{bezeichnung, laufzeit}, rs -> {
+			try {
+				int vertragid = rs.getInt("VertragID");
+	            String Bezeichnung = rs.getString("Bezeichnung");
+	            int Laufzeit = rs.getInt("Laufzeit");
+	            double Grundpreis = rs.getDouble("Grundpreis");
+	            Vertrag interessentO = new Vertrag(Bezeichnung, Laufzeit, Grundpreis);
+				interessentO.setVertragID(vertragid);
+				return interessentO;
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;

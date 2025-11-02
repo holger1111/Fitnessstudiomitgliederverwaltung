@@ -1,10 +1,8 @@
 package daos;
 
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.ResultSet;
+import objects.Intervall;
+
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class IntervallDAO extends DAO {
@@ -33,6 +31,24 @@ public class IntervallDAO extends DAO {
 				String zahlungsintervall = rs.getString("Zahlungsintervall");
 				String bezeichnung = rs.getString("Bezeichnung");
 				return new Intervall(intervallid, zahlungsintervall, bezeichnung);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	public Intervall findByZahlungsintervallBezeichnung(String zahlungsintervall, String bezeichnung) {
+		String sql = "SELECT IntervallID, Zahlungsintervall, Bezeichnung FROM Intervall WHERE Zahlungsintervall = ? AND Bezeichnung = ?";
+		ArrayList<Intervall> list = getResults(sql, new Object[]{zahlungsintervall, bezeichnung}, rs -> {
+			try {
+				int intervallid = rs.getInt("IntervallID");
+	            String Zahlungsintervall = rs.getString("Zahlungsintervall");
+	            String Bezeichnung = rs.getString("Bezeichnung");
+	            Intervall intervallO = new Intervall(Zahlungsintervall, Bezeichnung);
+	            intervallO.setIntervallID(intervallid);
+				return intervallO;
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;

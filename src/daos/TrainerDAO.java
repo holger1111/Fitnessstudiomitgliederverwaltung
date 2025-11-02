@@ -1,10 +1,8 @@
 package daos;
 
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.ResultSet;
+import objects.Trainer;
+
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class TrainerDAO extends DAO {
@@ -35,6 +33,25 @@ public class TrainerDAO extends DAO {
 				String nachname = rs.getString("Nachname");
 				String kommentar = rs.getString("Kommentar");
 				return new Trainer(trainerid, vorname, nachname, kommentar);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	
+	public Trainer findByVornameNachname(String vorname, String nachname) {
+		String sql = "SELECT MitgliederID, Vorname, Nachname, Telefon, Mail FROM Trainer WHERE Vorname = ? AND Nachname = ? AND Telefon = ? AND Mail = ?";
+		ArrayList<Trainer> list = getResults(sql, new Object[]{vorname, nachname}, rs -> {
+			try {
+				int trainerid = rs.getInt("TrainerID");
+	            String Vorname = rs.getString("Vorname");
+	            String Nachname = rs.getString("Nachname");
+	            Trainer interessentO = new Trainer(Vorname, Nachname);
+				interessentO.setTrainerID(trainerid);
+				return interessentO;
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;

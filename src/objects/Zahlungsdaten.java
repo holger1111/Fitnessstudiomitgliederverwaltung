@@ -21,6 +21,12 @@ public class Zahlungsdaten {
 	
 	public Zahlungsdaten(int zahlungsdatenID, String name, String IBAN, String BIC) {
 		this.zahlungsdatenID = zahlungsdatenID;
+		try {
+			this.zahlungsdatenID = Zahlungsdaten.getZahlungsdatenID(name, IBAN, BIC);
+		} catch (IDNotFoundException e)	{		// TODO: IDNotFoundException erstellen
+			Zahlungsdaten neueZahlungsdaten = new Zahlungsdaten(name, IBAN, BIC);
+			this.zahlungsdatenID = neueZahlungsdaten.getZahlungsdatenID();
+		}
 		this.name = name;
 		this.IBAN = IBAN;
 		this.BIC = BIC;

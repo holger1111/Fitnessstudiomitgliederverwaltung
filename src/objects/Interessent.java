@@ -22,7 +22,7 @@ public class Interessent {
 		this.mail = mail;
 	}
 
-	public Interessent(int mitgliederid,String vorname, String nachname, String telefon, String mail) {
+	public Interessent(int mitgliederid, String vorname, String nachname, String telefon, String mail) {
 		this.mitgliederid = mitgliederid;
 		try {
 			this.mitgliederid = Interessent.getMitgliederID(vorname, nachname, telefon, mail);

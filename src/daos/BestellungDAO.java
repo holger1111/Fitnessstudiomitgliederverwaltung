@@ -1,10 +1,10 @@
 package daos;
 
+import objects.Bestellung;
+import objects.Interessent;
+
 import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class BestellungDAO extends DAO {
@@ -14,12 +14,12 @@ public class BestellungDAO extends DAO {
 		String sql = "SELECT BestellungID, MitgliederID, Gesamtpreis, Bestelldatum, ZahlungID FROM Bestellung";
 		return getResults(sql, null, rs -> {
 			try {
-				int bestellungid = rs.getInt("BestellungID");
-				int mitgliederid = rs.getInt("MitgliederID");
+				int bestellungID = rs.getInt("BestellungID");
+				int mitgliederID = rs.getInt("MitgliederID");
 				double gesamtpreis = rs.getDouble("Gesamtpreis");
 				Timestamp bestelldatum = rs.getTimestamp("Bestelldatum");
-				int zahlungid = rs.getInt("ZahlungID");
-                return new Bestellung(bestellungid, mitgliederid, gesamtpreis, bestelldatum, zahlungid);
+				int zahlungID = rs.getInt("ZahlungID");
+                return new Bestellung(bestellungID, mitgliederID, gesamtpreis, bestelldatum, zahlungID);
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;
@@ -31,12 +31,30 @@ public class BestellungDAO extends DAO {
 		String sql = "SELECT BestellungID, MitgliederID, Gesamtpreis, Bestelldatum, ZahlungID FROM Bestellung WHERE BestellungID = ?";
 		ArrayList<Bestellung> list = getResults(sql, new Object[]{id}, rs -> {
 			try {
-				int bestellungid = rs.getInt("BestellungID");
-				int mitgliederid = rs.getInt("MitgliederID");
+				int bestellungID = rs.getInt("BestellungID");
+				int mitgliederID = rs.getInt("MitgliederID");
 				double gesamtpreis = rs.getDouble("Gesamtpreis");
 				Timestamp bestelldatum = rs.getTimestamp("Bestelldatum");
-				int zahlungid = rs.getInt("ZahlungID");
-				return new Bestellung(bestellungid, mitgliederid, gesamtpreis, bestelldatum, zahlungid);
+				int zahlungID = rs.getInt("ZahlungID");
+				return new Bestellung(bestellungID, mitgliederID, gesamtpreis, bestelldatum, zahlungID);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	public Bestellung findByMitgliederIDZahlungID(int mitgliederID, int zahlungID) {
+		String sql = "SELECT BestellungID, MitgliederID, ZahlungID FROM Bestellung WHERE MitgliederID = ? AND ZahlungID = ?";
+		ArrayList<Bestellung> list = getResults(sql, new Object[]{mitgliederID, zahlungID}, rs -> {
+			try {
+				int bestellungID = rs.getInt("BestellungID");
+				int mitgliederid = rs.getInt("MitgliederID");
+	            int zahlungid = rs.getInt("ZahlungID");
+	            Bestellung bestellungO = new Bestellung(mitgliederid, zahlungid);
+	            bestellungO.setBestellungID(bestellungID);
+				return bestellungO;
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;
@@ -48,7 +66,7 @@ public class BestellungDAO extends DAO {
 	// INSERT
 	public int insertBestellung(Bestellung m) {
 		String sql = "INSERT INTO Bestellung (BestellungID, MitgliederID, Gesamtpreis, Bestelldatum, ZahlungID) VALUES (?, ?, ?, ?, ?)";
-		Object[] params = { m.getBestellungID(), m.getMitgliederID(), m.getGesamtpreis(), Date.valueIf(m.getBestelldatum()), m.getZahlungID() };
+		Object[] params = { m.getBestellungID(), m.getMitgliederID(), m.getGesamtpreis(), m.getBestelldatum(), m.getZahlungID() };
 		return insert(sql, params);
 	}
 

@@ -1,10 +1,8 @@
 package daos;
 
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.ResultSet;
+import objects.Artikel;
+
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ArtikelDAO extends DAO {
@@ -35,6 +33,25 @@ public class ArtikelDAO extends DAO {
 				double einzelpreis = rs.getDouble("Einzelpreis");
 				String kommentar = rs.getString("Kommentar");
 				return new Artikel(artikelid, name, einzelpreis, kommentar);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	
+	public Artikel findByNameEinzelpreis(String name, double einzelpreis) {
+		String sql = "SELECT ArtikelID, Name, Einzelpreis FROM Artikel WHERE Name = ? AND Einzelpreis = ?";
+		ArrayList<Artikel> list = getResults(sql, new Object[]{name, einzelpreis}, rs -> {
+			try {
+				int artikelid = rs.getInt("ArtikelID");
+	            String Name = rs.getString("Name");
+	            double Einzelpreis = rs.getDouble("Einzelpreis");
+	            Artikel interessentO = new Artikel(Name, Einzelpreis);
+				interessentO.setArtikelID(artikelid);
+				return interessentO;
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;

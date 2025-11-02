@@ -1,10 +1,8 @@
 package daos;
 
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.ResultSet;
+import objects.ArtikelBestellung;
+
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ArtikelBestellungDAO extends DAO {

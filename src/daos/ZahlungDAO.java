@@ -1,10 +1,8 @@
 package daos;
 
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.ResultSet;
+import objects.Zahlung;
+
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ZahlungDAO extends DAO {
@@ -37,6 +35,24 @@ public class ZahlungDAO extends DAO {
 			}
 		});
 		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	public Zahlung findByZahlungsart(String zahlungsart) {
+		String sql = "SELECT ZahlungID, Zahlungsart FROM Zahlung WHERE Zahlungsart = ?";
+		ArrayList<Zahlung> list = getResults(sql, new Object[]{zahlungsart}, rs -> {
+			try {
+				int zahlungid = rs.getInt("ZahlungID");
+	            String Zahlungsart = rs.getString("Zahlungsart");
+	            Zahlung zahlungO = new Zahlung(zahlungid, Zahlungsart);
+				zahlungO.setZahlungID(zahlungid);
+				return zahlungO;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+		return list.isEmpty() ? null : list.get(0);
+	
 	}
 	
 	// INSERT
