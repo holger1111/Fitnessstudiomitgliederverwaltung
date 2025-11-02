@@ -9,7 +9,7 @@ public class ArtikelBestellung {
 	private int bestellungID;
 	private int artikelID;
 	private int menge;
-	private double Aufaddiert;
+	private double aufaddiert;
 	
 	// Konstruktor
 	
@@ -55,11 +55,11 @@ public class ArtikelBestellung {
 	}
 
 	public double getAufaddiert() {
-		return Aufaddiert;
+		return aufaddiert;
 	}
 
 	public void setAufaddiert(double aufaddiert) {
-		Aufaddiert = aufaddiert;
+		aufaddiert = aufaddiert;
 	}
 	
 	// Override
@@ -67,12 +67,12 @@ public class ArtikelBestellung {
 	@Override
 	public String toString() {
 		return "BestellungID: " + bestellungID + "\nArtikelID: " + artikelID + "\nMenge: " + menge
-				+ "\nAufaddiert: " + Aufaddiert + "\n";
+				+ "\nAufaddiert: " + aufaddiert + "\n";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(Aufaddiert, artikelID, bestellungID, menge);
+		return Objects.hash(aufaddiert, artikelID, bestellungID, menge);
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class ArtikelBestellung {
 		if (getClass() != obj.getClass())
 			return false;
 		ArtikelBestellung other = (ArtikelBestellung) obj;
-		return Double.doubleToLongBits(Aufaddiert) == Double.doubleToLongBits(other.Aufaddiert)
+		return Double.doubleToLongBits(aufaddiert) == Double.doubleToLongBits(other.aufaddiert)
 				&& artikelID == other.artikelID && bestellungID == other.bestellungID && menge == other.menge;
 	}
 
