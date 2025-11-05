@@ -17,7 +17,7 @@ import New.Exception.IntException;
 import New.Exception.NotFoundException;
 import New.DAOs.ConnectionDB;
 
-public class MitgliederManager extends Manager<Mitglieder> {
+public class MitgliederManager extends BaseManager<Mitglieder> {
 
 	private final MitgliederDAO mitgliederDAO;
 	private final InteressentenDAO interessentenDAO;
@@ -30,6 +30,22 @@ public class MitgliederManager extends Manager<Mitglieder> {
 		interessentenDAO = new InteressentenDAO(connection);
 		ortDAO = new OrtDAO(connection);
 		zahlungsdatenDAO = new ZahlungsdatenDAO(connection);
+	}
+	
+	public int createInteressent(String vorname, String nachname, String telefon) throws Exception {
+	    return interessentenDAO.findOrCreateInteressent(vorname, nachname, telefon);
+	}
+
+	public MitgliederDAO getMitgliederDAO() {
+	    return mitgliederDAO;
+	}
+
+	public OrtDAO getOrtDAO() {
+	    return ortDAO;
+	}
+
+	public ZahlungsdatenDAO getZahlungsdatenDAO() {
+	    return zahlungsdatenDAO;
 	}
 
 	@Override
@@ -56,10 +72,10 @@ public class MitgliederManager extends Manager<Mitglieder> {
 	public void process() {
 	}
 
-	public Mitglieder findById(int id) throws NotFoundException, IntException, SQLException {
-		Mitglieder mitglied = mitgliederDAO.findById(id);
+	public Mitglieder findById(int MitgliederID) throws NotFoundException, IntException, SQLException {
+		Mitglieder mitglied = mitgliederDAO.findById(MitgliederID);
 		if (mitglied == null) {
-			throw new NotFoundException("Mitglied mit ID " + id + " nicht gefunden.");
+			throw new NotFoundException("Mitglied mit ID " + MitgliederID + " nicht gefunden.");
 		}
 		return mitglied;
 	}
@@ -74,13 +90,11 @@ public class MitgliederManager extends Manager<Mitglieder> {
 	public List<Mitglieder> search(String searchTerm) throws SQLException, IntException {
 		List<Mitglieder> result = new ArrayList<>();
 
-		// Suche Mitglieder
 		List<Mitglieder> mitglieder = mitgliederDAO.searchAllAttributes(searchTerm);
 		if (mitglieder != null) {
 			result.addAll(mitglieder);
 		}
 
-		// Suche Interessenten und ggf. zugehörige Mitglieder finden
 		List<Interessenten> interessenten = interessentenDAO.searchAllAttributes(searchTerm);
 		if (interessenten != null) {
 			for (Interessenten i : interessenten) {
@@ -93,7 +107,6 @@ public class MitgliederManager extends Manager<Mitglieder> {
 			}
 		}
 
-		// Suche Ort und verwandte Mitglieder hinzufügen
 		List<Ort> orte = ortDAO.searchAllAttributes(searchTerm);
 		if (orte != null) {
 			for (Ort o : orte) {
@@ -106,7 +119,6 @@ public class MitgliederManager extends Manager<Mitglieder> {
 			}
 		}
 
-		// Suche Zahlungsdaten und zugehörige Mitglieder hinzufügen
 		List<Zahlungsdaten> zahlungsdatenListe = zahlungsdatenDAO.searchAllAttributes(searchTerm);
 		if (zahlungsdatenListe != null) {
 			for (Zahlungsdaten z : zahlungsdatenListe) {

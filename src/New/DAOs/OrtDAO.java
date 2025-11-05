@@ -30,7 +30,7 @@ public class OrtDAO extends BaseDAO<Ort> {
     
     public List<Ort> searchAllAttributes(String searchTerm) throws SQLException {
         List<Ort> results = new ArrayList<>();
-        String sql = "SELECT * FROM ort WHERE Ort LIKE ? OR plz LIKE ?";
+        String sql = "SELECT OrtID, PLZ, Ort FROM Ort WHERE Ort LIKE ? OR PLZ LIKE ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             String pattern = "%" + searchTerm + "%";
             stmt.setString(1, pattern);
@@ -50,7 +50,7 @@ public class OrtDAO extends BaseDAO<Ort> {
     
     private Ort mapRowToOrt(ResultSet rs) throws SQLException {
     	Ort ort = new Ort();
-    	ort.setOrtID(rs.getInt("id"));
+    	ort.setOrtID(rs.getInt("OrtID"));
     	ort.setPLZ(rs.getString("PLZ"));
     	ort.setOrt(rs.getString("Ort"));
         return ort;
@@ -69,7 +69,7 @@ public class OrtDAO extends BaseDAO<Ort> {
         stringValidator.validate(ort);
         
         // Suche nach existierendem Ort
-        String selectSQL = "SELECT OrtID FROM Orte WHERE PLZ = ? AND Ort = ?";
+        String selectSQL = "SELECT OrtID, PLZ, Ort FROM Ort WHERE PLZ = ? AND Ort = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -85,7 +85,7 @@ public class OrtDAO extends BaseDAO<Ort> {
         }
 
         // Falls nicht vorhanden: neu anlegen
-        String insertSQL = "INSERT INTO Orte (PLZ, Ort) VALUES (?, ?)";
+        String insertSQL = "INSERT INTO Ort (PLZ, Ort) VALUES (?, ?)";
         try {
             ps = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, plz);
@@ -110,7 +110,7 @@ public class OrtDAO extends BaseDAO<Ort> {
         } catch (Exception e) {
             throw new IntException("Fehler bei der OrtID-Validierung: " + e.getMessage());
         }
-        String sql = "SELECT OrtID, PLZ, Ort FROM Orte WHERE OrtID = ?";
+        String sql = "SELECT OrtID, PLZ, Ort FROM Ort WHERE OrtID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -147,7 +147,7 @@ public class OrtDAO extends BaseDAO<Ort> {
             throw ex;
         }
 
-        String sql = "INSERT INTO Orte (OrtID, PLZ, Ort) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Ort (OrtID, PLZ, Ort) VALUES (?, ?, ?)";
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);
@@ -173,7 +173,7 @@ public class OrtDAO extends BaseDAO<Ort> {
             throw ex;
         }
 
-        String sql = "UPDATE Orte SET PLZ = ?, Ort = ? WHERE OrtID = ?";
+        String sql = "UPDATE Ort SET PLZ = ?, Ort = ? WHERE OrtID = ?";
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);
@@ -194,7 +194,7 @@ public class OrtDAO extends BaseDAO<Ort> {
         } catch (Exception e) {
             throw new IntException("Fehler bei OrtID: " + e.getMessage());
         }
-        String sql = "DELETE FROM Orte WHERE OrtID = ?";
+        String sql = "DELETE FROM Ort WHERE OrtID = ?";
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);

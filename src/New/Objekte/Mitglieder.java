@@ -166,23 +166,63 @@ public class Mitglieder extends Interessenten {
 
 	@Override
 	public String toString() {
-		String geburtsStr = geburtstag != null ? new java.text.SimpleDateFormat("dd.MM.yyyy").format(geburtstag) : "";
-	    String strasseStr = strasse != null ? strasse : "";
-	    String hausnrStr = hausnr != null ? hausnr : "";
-	    String ortIDStr = (ort != null && ort.getOrtID() != 0) ? String.valueOf(ort.getOrtID()) : "";
-	    String plzStr = ort != null ? ort.getPLZ() : "";
-	    String ortStr = ort != null ? ort.getOrt() : "";
-	    String zahlungsdatenIDstr = zahlungsdaten != null ? String.valueOf(zahlungsdaten.getZahlungsdatenID()) : "";
-	    String mailStr = mail != null ? mail : "";
-		return String.format(
-				"Mitglied:\nMitgliederID: \t%d\nName: \t\t%s %s\nGeburtstag: \t%s\nAlter: \t\t%d\nAktiv: \t\t%b"
-						+ "\nAddresse:\n\t\t%s %s\n\t\t%s %s\nTelefon: \t%s\nMail: \t\t%s\n",
-				getMitgliederID(), getVorname(), getNachname(),
-				geburtstag != null ? new java.text.SimpleDateFormat("dd.MM.yyyy").format(geburtstag) : 0,
-						geburtstag != null ? berechneAlter() : 0, aktiv, strasse, hausnr, ort != null ? ort.getPLZ() : "",
-				ort != null ? ort.getOrt() : "", getTelefon(), mail);
+	    StringBuilder sb = new StringBuilder();
+
+	    boolean hasGeburtstag = geburtstag != null;
+	    boolean hasAlter = geburtstag != null && berechneAlter() > 0;
+	    boolean hasAdresse = (strasse != null && !strasse.isEmpty()) 
+	            || (hausnr != null && !hausnr.isEmpty())
+	            || (ort != null && (
+	                    (ort.getPLZ() != null && !ort.getPLZ().isEmpty()) ||
+	                    (ort.getOrt() != null && !ort.getOrt().isEmpty())
+	            ));
+	    boolean hasMail = mail != null && !mail.isEmpty();
+
+	    if (!hasGeburtstag && !hasAlter && !hasAdresse && !hasMail) {
+	        sb.append("Interessent:\n");
+	    } else {
+	        sb.append("Mitglied:\n");
+	    }
+	    sb.append("MitgliederID: \t").append(getMitgliederID()).append("\n")
+	      .append("Name: \t\t").append(getVorname()).append(" ").append(getNachname()).append("\n");
+
+	    if (hasGeburtstag) {
+	        String geburtsStr = new java.text.SimpleDateFormat("dd.MM.yyyy").format(geburtstag);
+	        sb.append("Geburtstag: \t").append(geburtsStr).append("\n");
+	    }
+	    if (hasAlter) {
+	        sb.append("Alter: \t\t").append(berechneAlter()).append("\n");
+	    }
+	    sb.append("Aktiv: \t\t").append(aktiv).append("\n");
+
+	    if (hasAdresse) {
+	        sb.append("Addresse:\n");
+	        if (strasse != null && !strasse.isEmpty()) 
+	            sb.append("\t\t").append(strasse);
+	        if (hausnr != null && !hausnr.isEmpty())
+	            sb.append(" ").append(hausnr);
+	        if ((strasse != null && !strasse.isEmpty()) || (hausnr != null && !hausnr.isEmpty()))
+	            sb.append("\n");
+	        if (ort != null) {
+	            if (ort.getPLZ() != null && !ort.getPLZ().isEmpty())
+	                sb.append("\t\t").append(ort.getPLZ());
+	            if (ort.getOrt() != null && !ort.getOrt().isEmpty())
+	                sb.append(" ").append(ort.getOrt());
+	            if ((ort.getPLZ() != null && !ort.getPLZ().isEmpty()) 
+	                    || (ort.getOrt() != null && !ort.getOrt().isEmpty()))
+	                sb.append("\n");
+	        }
+	    }
+
+	    sb.append("Telefon: \t").append(getTelefon()).append("\n");
+	    if (hasMail) {
+	        sb.append("Mail: \t\t").append(mail).append("\n");
+	    }
+
+	    return sb.toString();
 	}
 
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(getMitgliederID());

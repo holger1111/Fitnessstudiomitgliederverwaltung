@@ -24,11 +24,11 @@ public class InteressentenDAO extends BaseDAO<Interessenten> {
     
     public List<Interessenten> searchAllAttributes(String searchTerm) throws SQLException {
         List<Interessenten> results = new ArrayList<>();
-        String sql = "SELECT * FROM Mitglieder WHERE " +
-                     "vorname LIKE ? OR nachname LIKE ? OR mail LIKE ? OR telefon LIKE ?";
+        String sql = "SELECT MitgliederID, Vorname, Nachname, Telefon FROM Mitglieder WHERE " +
+                     "Vorname LIKE ? OR Nachname LIKE ? OR Telefon LIKE ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             String pattern = "%" + searchTerm + "%";
-            for (int i = 1; i <= 4; i++) {
+            for (int i = 1; i <= 3; i++) {
                 stmt.setString(i, pattern);
             }
             ResultSet rs = stmt.executeQuery();
@@ -46,10 +46,10 @@ public class InteressentenDAO extends BaseDAO<Interessenten> {
     
     private Mitglieder mapRowToInteressenten(ResultSet rs) throws SQLException {
         Mitglieder mitglied = new Mitglieder();
-        mitglied.setMitgliederID(rs.getInt("mitgliederid"));
-        mitglied.setVorname(rs.getString("vorname"));
-        mitglied.setNachname(rs.getString("nachname"));
-        mitglied.setTelefon(rs.getString("telefon"));
+        mitglied.setMitgliederID(rs.getInt("MitgliederID"));
+        mitglied.setVorname(rs.getString("Vorname"));
+        mitglied.setNachname(rs.getString("Nachname"));
+        mitglied.setTelefon(rs.getString("Telefon"));
         return mitglied;
     }
     

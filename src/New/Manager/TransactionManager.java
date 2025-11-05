@@ -6,7 +6,7 @@ import New.DAOs.ConnectionDB;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class TransactionManager extends Manager<Transaction> {
+public class TransactionManager extends BaseManager<Transaction> {
 
     private Transaction currentTransaction;
 

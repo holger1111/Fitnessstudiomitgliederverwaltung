@@ -2,7 +2,6 @@ package New.Validator;
 
 import New.Exception.PaymentDetailsException;
 import New.Exception.StringException;
-
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -13,9 +12,40 @@ public class IBANValidator extends StringValidator {
 
     @Override
     public void validate(Object obj) throws StringException, PaymentDetailsException {
-        super.validate(obj); // Diese Methode wirft jetzt nur StringException!
+        super.validate(obj);
         if (isValid()) {
             String iban = ((String) obj).replaceAll("\\s+", "");
+            
+            // Minimallänge allgemeiner IBAN
+            if (iban.length() < 15 || iban.length() > 34) {
+                String msg = "IBAN muss zwischen 15 und 34 Zeichen lang sein.";
+                errors.add(msg);
+                throw new PaymentDetailsException(msg);
+            }
+
+            if (iban.startsWith("DE")) {
+                // Für Deutschland: exakt 22 Stellen und Formate
+                if (iban.length() != 22) {
+                    String msg = "Deutsche IBAN muss exakt 22 Zeichen lang sein.";
+                    errors.add(msg);
+                    throw new PaymentDetailsException(msg);
+                }
+                String bankCode = iban.substring(4, 12);
+                String accountNum = iban.substring(12, 22);
+                if (!bankCode.matches("\\d{8}") || !accountNum.matches("\\d{10}")) {
+                    String msg = "BLZ oder Kontonummer hat falsches Format (nur Ziffern, BLZ=8, Kto=10).";
+                    errors.add(msg);
+                    throw new PaymentDetailsException(msg);
+                }
+            } else {
+                // Für alle anderen Länder: maximal 34 Zeichen
+                if (iban.length() > 34) {
+                    String msg = "Internationale IBAN darf maximal 34 Zeichen haben.";
+                    errors.add(msg);
+                    throw new PaymentDetailsException(msg);
+                }
+            }
+
             Matcher matcher = IBAN_PATTERN.matcher(iban);
             if (!matcher.matches()) {
                 String msg = "Eingabe entspricht nicht dem IBAN-Format.";
@@ -29,7 +59,7 @@ public class IBANValidator extends StringValidator {
         }
     }
 
-    // Methoden
+    // Prüfziffern-Check nach Modulo 97
     private boolean isValidIBAN(String iban) {
         String rearranged = iban.substring(4) + iban.substring(0, 4);
         StringBuilder numericIBAN = new StringBuilder();

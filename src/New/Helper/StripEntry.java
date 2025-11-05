@@ -4,7 +4,8 @@ import java.util.regex.Pattern;
 
 public class StripEntry {
 
-    private static final Pattern DANGEROUS_SQL_PATTERN = Pattern.compile("(['\";--]|(\\b(SELECT|UPDATE|DELETE|INSERT|WHERE|DROP|SHOW|TRUNCATE|ALTER)\\b))", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DANGEROUS_SQL_PATTERN = Pattern.compile("(['\";-]|(\\b(SELECT|UPDATE|DELETE|INSERT|WHERE|DROP|SHOW|TRUNCATE|ALTER)\\b))", Pattern.CASE_INSENSITIVE);
+
 
     /**
      * Entfernt alle Whitespace-Zeichen am Anfang und Ende,
