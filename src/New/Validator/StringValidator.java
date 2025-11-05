@@ -1,18 +1,19 @@
 package New.Validator;
 
+import New.Exception.PaymentDetailsException;
 import New.Exception.StringException;
 
 public class StringValidator extends Validator<Object> {
 
-    @Override
-    public void validate(Object obj) throws Exception {
-        errors.clear();
-        if (!(obj instanceof String)) {
-            String msg = "Eingabe ist kein String.";
-            errors.add(msg);
-            throw new StringException(msg);
-        }
-    }
+	@Override
+	public void validate(Object obj) throws StringException, PaymentDetailsException {
+	    errors.clear();
+	    if (!(obj instanceof String)) {
+	        String msg = "Eingabe ist kein String.";
+	        errors.add(msg);
+	        throw new StringException(msg);
+	    }
+	}
 }
 
 //

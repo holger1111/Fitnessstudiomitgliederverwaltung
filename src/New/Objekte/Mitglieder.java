@@ -16,6 +16,7 @@ public class Mitglieder extends Interessenten {
 	private String hausnr;
 	private Ort ort;
 	private int ortID;
+	private Zahlungsdaten zahlungsdaten;
 	private int zahlungsdatenID;
 	private String mail;
 
@@ -37,15 +38,32 @@ public class Mitglieder extends Interessenten {
 		this.mail = mail;
 	}
 
+	// Neuer Konstruktor, der direkt das Zahlungsdaten-Objekt akzeptiert
+	public Mitglieder(String vorname, String nachname, String telefon, Date geburtstag, boolean aktiv, String strasse,
+			String hausnr, Ort ort, Zahlungsdaten zahlungsdaten, String mail) {
+		super(vorname, nachname, telefon);
+		this.geburtstag = geburtstag;
+		this.aktiv = aktiv;
+		this.strasse = strasse;
+		this.hausnr = hausnr;
+		this.ort = ort;
+		this.zahlungsdaten = zahlungsdaten;
+		this.ortID = ort != null ? ort.getOrtID() : 0;
+		this.zahlungsdatenID = zahlungsdaten != null ? zahlungsdaten.getZahlungsdatenID() : 0;
+		this.mail = mail;
+	}
+
 	public Mitglieder(int mitgliederID, String vorname, String nachname, String telefon, Date geburtstag, boolean aktiv,
-			String strasse, String hausnr, int ortID, int zahlungsdatenID, String mail) {
+			String strasse, String hausnr, Ort ort, Zahlungsdaten zahlungsdaten, String mail) {
 		super(mitgliederID, vorname, nachname, telefon);
 		this.geburtstag = geburtstag;
 		this.aktiv = aktiv;
 		this.strasse = strasse;
 		this.hausnr = hausnr;
-		this.ortID = ortID;
-		this.zahlungsdatenID = zahlungsdatenID;
+		this.ort = ort;
+		this.zahlungsdaten = zahlungsdaten;
+		this.ortID = ort != null ? ort.getOrtID() : 0;
+		this.zahlungsdatenID = zahlungsdaten != null ? zahlungsdaten.getZahlungsdatenID() : 0;
 		this.mail = mail;
 	}
 
@@ -60,12 +78,15 @@ public class Mitglieder extends Interessenten {
 	}
 
 	public int berechneAlter() {
+		if (geburtstag == null) return 0;
 		Datum heute = DatumHelper.getAktuellesDatum();
 		Datum geburt = new Datum(getGeburtstag());
 
 		int alter = heute.getJahr() - geburt.getJahr();
 
-		if (heute.isBefore(new Datum(geburt.getJahr(), geburt.getMonat(), geburt.getTag()))) {
+		// Prüfe, ob aktuelles Datum vor dem Geburtstag in diesem Jahr liegt
+		Datum geburtAktuellesJahr = new Datum(heute.getJahr(), geburt.getMonat(), geburt.getTag());
+		if (heute.isBefore(geburtAktuellesJahr)) {
 			alter--;
 		}
 		return alter;
@@ -99,8 +120,13 @@ public class Mitglieder extends Interessenten {
 		return ort != null ? ort.getPLZ() : null;
 	}
 
-	public String getOrt() {
-		return ort != null ? ort.getName() : null;
+	public Ort getOrt() {
+		return ort;
+	}
+
+	public void setOrt(Ort ort) {
+		this.ort = ort;
+		this.ortID = ort != null ? ort.getOrtID() : 0;
 	}
 
 	public int getOrtID() {
@@ -109,6 +135,15 @@ public class Mitglieder extends Interessenten {
 
 	public void setOrtID(int ortID) {
 		this.ortID = ortID;
+	}
+
+	public Zahlungsdaten getZahlungsdaten() {
+		return zahlungsdaten;
+	}
+
+	public void setZahlungsdaten(Zahlungsdaten zahlungsdaten) {
+		this.zahlungsdaten = zahlungsdaten;
+		this.zahlungsdatenID = zahlungsdaten != null ? zahlungsdaten.getZahlungsdatenID() : 0;
 	}
 
 	public int getZahlungsdatenID() {
@@ -131,9 +166,21 @@ public class Mitglieder extends Interessenten {
 
 	@Override
 	public String toString() {
-		return "Mitglied:\n" + "MitgliederID: " + getMitgliederID() + "\nVorname: " + getVorname() + " " + getNachname()
-				+ "\nGeburtstag: " + geburtstag + "\nAlter: " + "\nAktiv: " + aktiv + "\nAddresse:\n'" + strasse + " "
-				+ hausnr + "\n" + getPLZ() + " " + getOrt() + "\nTelefon: " + getTelefon() + "\nMail: " + mail + "\n";
+		String geburtsStr = geburtstag != null ? new java.text.SimpleDateFormat("dd.MM.yyyy").format(geburtstag) : "";
+	    String strasseStr = strasse != null ? strasse : "";
+	    String hausnrStr = hausnr != null ? hausnr : "";
+	    String ortIDStr = (ort != null && ort.getOrtID() != 0) ? String.valueOf(ort.getOrtID()) : "";
+	    String plzStr = ort != null ? ort.getPLZ() : "";
+	    String ortStr = ort != null ? ort.getOrt() : "";
+	    String zahlungsdatenIDstr = zahlungsdaten != null ? String.valueOf(zahlungsdaten.getZahlungsdatenID()) : "";
+	    String mailStr = mail != null ? mail : "";
+		return String.format(
+				"Mitglied:\nMitgliederID: \t%d\nName: \t\t%s %s\nGeburtstag: \t%s\nAlter: \t\t%d\nAktiv: \t\t%b"
+						+ "\nAddresse:\n\t\t%s %s\n\t\t%s %s\nTelefon: \t%s\nMail: \t\t%s\n",
+				getMitgliederID(), getVorname(), getNachname(),
+				geburtstag != null ? new java.text.SimpleDateFormat("dd.MM.yyyy").format(geburtstag) : 0,
+						geburtstag != null ? berechneAlter() : 0, aktiv, strasse, hausnr, ort != null ? ort.getPLZ() : "",
+				ort != null ? ort.getOrt() : "", getTelefon(), mail);
 	}
 
 	@Override

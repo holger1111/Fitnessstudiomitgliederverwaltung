@@ -1,6 +1,8 @@
 package New.Manager;
 
 import java.util.Scanner;
+import java.util.List;
+import New.Objekte.Mitglieder;
 
 public class Main {
 
@@ -19,10 +21,28 @@ public class Main {
             String eingabe = scanner.nextLine();
 
             switch (eingabe) {
-                case "1":
-                    System.out.println("Mitgliedersuche ausgewählt");
-                    // Hier Aufruf der Suchmethode
-                    break;
+            case "1":
+                System.out.println("Mitgliedersuche ausgewählt");
+                System.out.print("Bitte Suchbegriff eingeben: ");
+                String suchbegriff = scanner.nextLine();
+                try {
+                    MitgliederManager manager = new MitgliederManager(); // ggf. als Attribut, nicht in jeder Schleife neu!
+                    List<Mitglieder> ergebnis = manager.search(suchbegriff);
+                    if (ergebnis.isEmpty()) {
+                        System.out.println("Keine Mitglieder gefunden.");
+                    } else {
+                        System.out.println("Gefundene Mitglieder:");
+                        for (Mitglieder m : ergebnis) {
+                            // Einfachausgabe – passe gerne an
+                            System.out.println(m.toString());
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("Fehler bei der Mitgliedersuche: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                break;
+
                 case "2":
                     System.out.println("Interessentenerstellung ausgewählt");
                     // Hier Aufruf Erstellung Interessenten

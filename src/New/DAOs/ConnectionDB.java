@@ -7,7 +7,7 @@ import New.Exception.ConnectionException;
 
 public class ConnectionDB {
 
-    private static String url = "jdbc:mysql://localhost:3306/mitgliederverwaltung";
+    private static String url = "jdbc:mysql://localhost:3306/Mitgliederverwaltung";
     private static String user = "root";
     private static String password = "meinPasswort";
 

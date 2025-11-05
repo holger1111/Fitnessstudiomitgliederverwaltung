@@ -4,85 +4,77 @@ import java.util.Objects;
 
 public class Interessenten {
 
-	// Attribute
+    // Attribute
+    private int mitgliederID;
+    private String vorname;
+    private String nachname;
+    private String telefon;
 
-	private int mitgliederID;
-	private String vorname;
-	private String nachname;
-	private String telefon;
+    // Konstruktor
+    public Interessenten() { }
 
-	// Konstruktor
-	
-	public Interessenten() {
-	}
-	
-	public Interessenten(String vorname, String nachname, String telefon) {
-		this.vorname = vorname;
-		this.nachname = nachname;
-		this.telefon = telefon;
-	}
+    public Interessenten(String vorname, String nachname, String telefon) {
+        this.vorname = vorname;
+        this.nachname = nachname;
+        this.telefon = telefon;
+    }
 
-	public Interessenten(int mitgliederID, String vorname, String nachname, String telefon) {
-		this.mitgliederID = mitgliederID;
-		this.vorname = vorname;
-		this.nachname = nachname;
-		this.telefon = telefon;
-	}
-	
-	// Getter und Setter
-	
-	public int getMitgliederID() {
-		return mitgliederID;
-	}
+    public Interessenten(int mitgliederID, String vorname, String nachname, String telefon) {
+        this.mitgliederID = mitgliederID;
+        this.vorname = vorname;
+        this.nachname = nachname;
+        this.telefon = telefon;
+    }
 
-	public void setMitgliederID(int mitgliederID) {
-		this.mitgliederID = mitgliederID;
-	}
+    // Getter & Setter
+    public int getMitgliederID() {
+        return mitgliederID;
+    }
 
-	public String getVorname() {
-		return vorname;
-	}
+    public void setMitgliederID(int mitgliederID) {
+        this.mitgliederID = mitgliederID;
+    }
 
-	public void setVorname(String vorname) {
-		this.vorname = vorname;
-	}
+    public String getVorname() {
+        return vorname;
+    }
 
-	public String getNachname() {
-		return nachname;
-	}
+    public void setVorname(String vorname) {
+        this.vorname = vorname;
+    }
 
-	public void setNachname(String nachname) {
-		this.nachname = nachname;
-	}
+    public String getNachname() {
+        return nachname;
+    }
 
-	public String getTelefon() {
-		return telefon;
-	}
+    public void setNachname(String nachname) {
+        this.nachname = nachname;
+    }
 
-	public void setTelefon(String telefon) {
-		this.telefon = telefon;
-	}
+    public String getTelefon() {
+        return telefon;
+    }
 
-	// Override
-	
-	@Override
-	public String toString() {
-		return "Interessent:\n" + "MitgliederID: " + mitgliederID + "\nName: " + vorname + " " + 
-				nachname + "\nTelefon: " + telefon + "\n";
-	}
+    public void setTelefon(String telefon) {
+        this.telefon = telefon;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(mitgliederID);
-	}
+    // Override
+    @Override
+    public String toString() {
+        return "Interessent:\nMitgliederID: " + mitgliederID + "\nName: " + vorname + " " + nachname + "\nTelefon: " + telefon + "\n";
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof Interessenten))
-			return false;
-		Interessenten other = (Interessenten) obj;
-		return this.mitgliederID == other.mitgliederID;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(mitgliederID);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Interessenten)) return false;
+        Interessenten other = (Interessenten) obj;
+        return this.mitgliederID == other.mitgliederID;
+    }
 }

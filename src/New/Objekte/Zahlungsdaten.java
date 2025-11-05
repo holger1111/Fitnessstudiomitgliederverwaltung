@@ -4,86 +4,85 @@ import java.util.Objects;
 
 public class Zahlungsdaten {
 
-	// Attribute
+    // Attribute
+    private int zahlungsdatenID;
+    private String name;
+    private String iban;
+    private String bic;
 
-	private int zahlungsdatenID;
-	private String name;
-	private String iban;
-	private String bic;
+    // Konstruktor
+    public Zahlungsdaten() {
+    }
 
-	// Konstruktor
+    public Zahlungsdaten(String name, String iban, String bic) {
+        this.name = name;
+        this.iban = iban;
+        this.bic = bic;
+    }
 
-	public Zahlungsdaten() {
-	}
+    public Zahlungsdaten(int zahlungsdatenID, String name, String iban, String bic) {
+        this.zahlungsdatenID = zahlungsdatenID;
+        this.name = name;
+        this.iban = iban;
+        this.bic = bic;
+    }
 
-	public Zahlungsdaten(String name, String iban, String bic) {
-		this.name = name;
-		this.iban = iban;
-		this.bic = bic;
-	}
+    // Setter & Getter
+    public int getZahlungsdatenID() {
+        return zahlungsdatenID;
+    }
 
-	public Zahlungsdaten(int zahlungsdatenID, String name, String iban, String bic) {
-		this.zahlungsdatenID = zahlungsdatenID;
-		this.name = name;
-		this.iban = iban;
-		this.bic = bic;
-	}
+    public void setZahlungsdatenID(int zahlungsdatenID) {
+        this.zahlungsdatenID = zahlungsdatenID;
+    }
 
-	// Setter & Getter
+    public String getName() {
+        return name;
+    }
 
-	public int getZahlungsdatenID() {
-		return zahlungsdatenID;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setZahlungsdatenID(int zahlungsdatenID) {
-		this.zahlungsdatenID = zahlungsdatenID;
-	}
+    public String getIBAN() {
+        return iban;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setIBAN(String iban) {
+        this.iban = iban;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getBIC() {
+        return bic;
+    }
 
-	public String getIban() {
-		return iban;
-	}
+    public void setBIC(String bic) {
+        this.bic = bic;
+    }
 
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
+    // Override
+    @Override
+    public String toString() {
+        return "Zahlungsdaten:\nZahlungsdatenID: " + zahlungsdatenID +
+               "\nName: " + name +
+               "\nIBAN: " + iban +
+               "\nBIC: " + bic +
+               "\n";
+    }
 
-	public String getBic() {
-		return bic;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(zahlungsdatenID, name, iban, bic);
+    }
 
-	public void setBic(String bic) {
-		this.bic = bic;
-	}
-
-	// Override
-
-	@Override
-	public String toString() {
-		return "Zahlungsdaten:\n" + "ZahlungsdatenID: " + zahlungsdatenID + "\nName: " + name + "\nIBAN: " + iban
-				+ "\nBIC: " + bic + "\n";
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(zahlungsdatenID, name, iban, bic);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof Zahlungsdaten))
-			return false;
-		Zahlungsdaten other = (Zahlungsdaten) obj;
-		return zahlungsdatenID == other.zahlungsdatenID && Objects.equals(name, other.name)
-				&& Objects.equals(iban, other.iban) && Objects.equals(bic, other.bic);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Zahlungsdaten)) return false;
+        Zahlungsdaten other = (Zahlungsdaten) obj;
+        return zahlungsdatenID == other.zahlungsdatenID &&
+               Objects.equals(name, other.name) &&
+               Objects.equals(iban, other.iban) &&
+               Objects.equals(bic, other.bic);
+    }
 }

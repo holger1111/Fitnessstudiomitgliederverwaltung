@@ -1,6 +1,7 @@
 package New.Validator;
 
 import New.Exception.PaymentDetailsException;
+import New.Exception.StringException;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -10,7 +11,7 @@ public class BICValidator extends StringValidator {
     private static final Pattern BIC_PATTERN = Pattern.compile(BIC_REGEX);
 
     @Override
-    public void validate(Object obj) throws Exception {
+    public void validate(Object obj) throws StringException {
         super.validate(obj);
         if (isValid()) {
             String bic = (String) obj;
@@ -18,26 +19,9 @@ public class BICValidator extends StringValidator {
             if (!matcher.matches()) {
                 String msg = "Eingabe ist kein gültiger BIC.";
                 errors.add(msg);
-                throw new PaymentDetailsException(msg);
+                throw new PaymentDetailsException(msg); // Kompatibel!
             }
         }
     }
+
 }
-
-
-
-//
-//BICValidator bicValidator = new BICValidator();
-//
-//String testBic = "DEUTDEFF"; // Beispiel BIC
-//bicValidator.validate(testBic);
-//
-//if (!bicValidator.isValid()) {
-//    System.out.println("Fehler beim BIC:");
-//    for (String error : bicValidator.getErrors()) {
-//        System.out.println(error);
-//    }
-//    bicValidator.saveErrorsToCsv();
-//} else {
-//    System.out.println("BIC ist gültig.");
-//}

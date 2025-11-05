@@ -1,6 +1,8 @@
 package New.Validator;
 
 import New.Exception.EMailException;
+import New.Exception.StringException;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -11,7 +13,7 @@ public class EMailValidator extends StringValidator {
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
     @Override
-    public void validate(Object obj) throws Exception {
+    public void validate(Object obj) throws StringException {
         super.validate(obj);
         if (isValid()) {
             String email = (String) obj;
@@ -19,7 +21,7 @@ public class EMailValidator extends StringValidator {
             if (!matcher.matches()) {
                 String msg = "Eingabe ist keine gültige E-Mail-Adresse.";
                 errors.add(msg);
-                throw new EMailException(msg);
+                throw new EMailException(msg); // Keine Override-Fehler!
             }
         }
     }

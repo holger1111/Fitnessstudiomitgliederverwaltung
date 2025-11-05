@@ -1,80 +1,73 @@
 package New.Objekte;
 
-import java.util.Objects;
-
 public class Ort {
-	
+
 	// Attribute
+	private int ortID;
+	private String plz;
+	private String name;
+
+	// Konstruktor
 	
-    private int ortID;
-    private String plz;
-    private String ort;
-    
-    // Konstruktor
-    
-    public Ort() {
-    }
+	public Ort() {
+		
+	}
+	
+	public Ort(String plz, String name) {
+		this.plz = plz;
+		this.name = name;
+	}
 
-    public Ort(String plz, String ort) {
-        this.plz = plz;
-        this.ort = ort;
-    }
+	// Konstruktor
+	public Ort(int ortID, String plz, String name) {
+		this.ortID = ortID;
+		this.plz = plz;
+		this.name = name;
+	}
 
-    public Ort(int ortID, String plz, String ort) {
-        this.ortID = ortID;
-        this.plz = plz;
-        this.ort = ort;
-    }
+	// Setter & Getter
+	public int getOrtID() {
+		return ortID;
+	}
 
-    // Setter & Getter
-    
-    public int getOrtID() {
-        return ortID;
-    }
+	public void setOrtID(int ortID) {
+		this.ortID = ortID;
+	}
 
-    public void setOrtID(int ortID) {
-        this.ortID = ortID;
-    }
+	public String getPLZ() {
+		return plz;
+	}
 
-    public String getPLZ() {
-        return plz;
-    }
+	public void setPLZ(String plz) {
+		this.plz = plz;
+	}
 
-    public void setPLZ(String plz) {
-        this.plz = plz;
-    }
+	public String getOrt() {
+		return name;
+	}
 
-    public String getName() {
-        return ort;
-    }
+	public void setOrt(String name) {
+		this.name = name;
+	}
 
-    public void setName(String ort) {
-        this.ort = ort;
-    }
-    
-    // Override
-    
-    @Override
-    public String toString() {
-        return "Ort:\n" +
-                "OrtID: " + ortID +
-                "\nPLZ: " + plz +
-                "\nOrt: '" + ort +
-                "\n";
-    }
+	// Override
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Ort))
+			return false;
+		Ort ort = (Ort) o;
+		return ortID == ort.ortID && java.util.Objects.equals(plz, ort.plz) && java.util.Objects.equals(name, ort.name);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(ortID, plz, ort);
-    }
+	@Override
+	public int hashCode() {
+		return java.util.Objects.hash(ortID, plz, name);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Ort)) return false;
-        Ort other = (Ort) obj;
-        return ortID == other.ortID &&
-               Objects.equals(plz, other.plz) &&
-               Objects.equals(ort, other.ort);
-    }
+	@Override
+	public String toString() {
+		return "Ort:\nOrtID: " + ortID + "\nPLZ: " + plz + "\nName: " + name + "\n";
+	}
 }

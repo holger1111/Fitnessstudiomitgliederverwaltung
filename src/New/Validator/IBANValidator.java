@@ -1,6 +1,8 @@
 package New.Validator;
 
 import New.Exception.PaymentDetailsException;
+import New.Exception.StringException;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -10,8 +12,8 @@ public class IBANValidator extends StringValidator {
     private static final Pattern IBAN_PATTERN = Pattern.compile(IBAN_REGEX);
 
     @Override
-    public void validate(Object obj) throws Exception {
-        super.validate(obj);
+    public void validate(Object obj) throws StringException, PaymentDetailsException {
+        super.validate(obj); // Diese Methode wirft jetzt nur StringException!
         if (isValid()) {
             String iban = ((String) obj).replaceAll("\\s+", "");
             Matcher matcher = IBAN_PATTERN.matcher(iban);
@@ -27,6 +29,7 @@ public class IBANValidator extends StringValidator {
         }
     }
 
+    // Methoden
     private boolean isValidIBAN(String iban) {
         String rearranged = iban.substring(4) + iban.substring(0, 4);
         StringBuilder numericIBAN = new StringBuilder();
@@ -47,20 +50,3 @@ public class IBANValidator extends StringValidator {
         return mod == 1;
     }
 }
-
-
-//
-//IBANValidator ibanValidator = new IBANValidator();
-//
-//String testIban = "DE89370400440532013000";
-//ibanValidator.validate(testIban);
-//
-//if (!ibanValidator.isValid()) {
-//    System.out.println("Fehler bei der IBAN:");
-//    for (String error : ibanValidator.getErrors()) {
-//        System.out.println(error);
-//    }
-//    ibanValidator.saveErrorsToCsv();
-//} else {
-//    System.out.println("IBAN ist gültig.");
-//}
