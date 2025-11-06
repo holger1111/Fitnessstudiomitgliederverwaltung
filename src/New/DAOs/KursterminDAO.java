@@ -19,8 +19,8 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
 
     @Override
     public Kurstermin findById(int id) throws SQLException, IntException, NotFoundException {
-        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Trainerfrei, Aktiv, Kommentar " +
-                     "FROM Kurstermin WHERE KursterminID = ?";
+        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Aktiv, Kommentar "
+                + "FROM Kurstermin WHERE KursterminID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -38,8 +38,8 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
 
     @Override
     public void insert(Kurstermin entity) throws SQLException {
-        String sql = "INSERT INTO Kurstermin (KursID, TrainerID, Termin, Trainerfrei, Aktiv, Kommentar) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Kurstermin (KursID, TrainerID, Termin, Aktiv, Kommentar) "
+                + "VALUES (?, ?, ?, ?, ?)";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -47,9 +47,8 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
             ps.setInt(1, entity.getKursID());
             ps.setInt(2, entity.getTrainerID());
             ps.setTimestamp(3, entity.getTermin());
-            ps.setInt(4, entity.getTrainerfrei());
-            ps.setBoolean(5, entity.isAktiv());
-            ps.setString(6, entity.getKommentar());
+            ps.setBoolean(4, entity.isAktiv());
+            ps.setString(5, entity.getKommentar());
             ps.executeUpdate();
 
             rs = ps.getGeneratedKeys();
@@ -63,18 +62,17 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
 
     @Override
     public void update(Kurstermin entity) throws SQLException {
-        String sql = "UPDATE Kurstermin SET KursID = ?, TrainerID = ?, Termin = ?, Trainerfrei = ?, " +
-                     "Aktiv = ?, Kommentar = ? WHERE KursterminID = ?";
+        String sql = "UPDATE Kurstermin SET KursID = ?, TrainerID = ?, Termin = ?, "
+                + "Aktiv = ?, Kommentar = ? WHERE KursterminID = ?";
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);
             ps.setInt(1, entity.getKursID());
             ps.setInt(2, entity.getTrainerID());
             ps.setTimestamp(3, entity.getTermin());
-            ps.setInt(4, entity.getTrainerfrei());
-            ps.setBoolean(5, entity.isAktiv());
-            ps.setString(6, entity.getKommentar());
-            ps.setInt(7, entity.getKursterminID());
+            ps.setBoolean(4, entity.isAktiv());
+            ps.setString(5, entity.getKommentar());
+            ps.setInt(6, entity.getKursterminID());
             ps.executeUpdate();
         } finally {
             closeResources(null, ps);
@@ -96,7 +94,7 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
 
     public List<Kurstermin> findAll() throws SQLException {
         List<Kurstermin> termine = new ArrayList<>();
-        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Trainerfrei, Aktiv, Kommentar FROM Kurstermin";
+        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Aktiv, Kommentar FROM Kurstermin";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -113,8 +111,8 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
 
     public List<Kurstermin> findByKursId(int kursID) throws SQLException {
         List<Kurstermin> termine = new ArrayList<>();
-        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Trainerfrei, Aktiv, Kommentar " +
-                     "FROM Kurstermin WHERE KursID = ?";
+        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Aktiv, Kommentar "
+                + "FROM Kurstermin WHERE KursID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -132,8 +130,8 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
 
     public List<Kurstermin> findByTrainerId(int trainerID) throws SQLException {
         List<Kurstermin> termine = new ArrayList<>();
-        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Trainerfrei, Aktiv, Kommentar " +
-                     "FROM Kurstermin WHERE TrainerID = ?";
+        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Aktiv, Kommentar "
+                + "FROM Kurstermin WHERE TrainerID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -151,21 +149,30 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
 
     public List<Kurstermin> searchAllAttributes(String searchTerm) throws SQLException {
         List<Kurstermin> results = new ArrayList<>();
-        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Trainerfrei, Aktiv, Kommentar " +
-                     "FROM Kurstermin WHERE Kommentar LIKE ?";
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            ps = connection.prepareStatement(sql);
-            String pattern = "%" + searchTerm + "%";
-            ps.setString(1, pattern);
-            rs = ps.executeQuery();
+
+        String sql = "SELECT KursterminID, KursID, TrainerID, Termin, Aktiv, Kommentar "
+                + "FROM Kurstermin "
+                + "WHERE CAST(KursterminID AS CHAR) LIKE ? "
+                + "OR CAST(KursID AS CHAR) LIKE ? "
+                + "OR CAST(TrainerID AS CHAR) LIKE ? "
+                + "OR CAST(Termin AS CHAR) LIKE ? "
+                + "OR Kommentar LIKE ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            String searchPattern = "%" + searchTerm + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            pstmt.setString(3, searchPattern);
+            pstmt.setString(4, searchPattern);
+            pstmt.setString(5, searchPattern);
+
+            ResultSet rs = pstmt.executeQuery();
+
             while (rs.next()) {
                 results.add(mapRowToKurstermin(rs));
             }
-        } finally {
-            closeResources(rs, ps);
         }
+
         return results;
     }
 
@@ -175,7 +182,6 @@ public class KursterminDAO extends BaseDAO<Kurstermin> {
         termin.setKursID(rs.getInt("KursID"));
         termin.setTrainerID(rs.getInt("TrainerID"));
         termin.setTermin(rs.getTimestamp("Termin"));
-        termin.setTrainerfrei(rs.getInt("Trainerfrei"));
         termin.setAktiv(rs.getBoolean("Aktiv"));
         termin.setKommentar(rs.getString("Kommentar"));
         return termin;

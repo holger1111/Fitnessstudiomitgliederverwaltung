@@ -24,7 +24,8 @@ public class Main {
             KursService kursService = new KursService(connection, scanner);
             VertragService vertragService = new VertragService(connection, scanner);
             ÜbersichtService übersichtService = new ÜbersichtService(connection, scanner);
-            AdminService adminService = new AdminService(connection, scanner);
+            SucheService sucheService = new SucheService(connection, scanner);
+//            AdminService adminService = new AdminService(connection, scanner);
 
             HauptmenüService hauptmenüService = new HauptmenüService(
                 connection, scanner,
@@ -33,7 +34,9 @@ public class Main {
                 kursService,
                 vertragService,
                 übersichtService,
-                adminService
+                sucheService
+//                ,
+//                adminService
             );
 
             // ========== PROGRAMM STARTEN ==========

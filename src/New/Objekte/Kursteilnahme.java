@@ -3,74 +3,90 @@ package New.Objekte;
 import java.sql.Timestamp;
 
 public class Kursteilnahme {
+    
+    // Zusammengesetzter Primärschlüssel
     private int mitgliederID;
     private int kursterminID;
-    private boolean anmeldbar;
+    
+    // Weitere Felder
+    private boolean angemeldet;
     private Timestamp anmeldezeit;
+    private boolean abgemeldet;
+    private Timestamp abmeldezeit;
     private boolean aktiv;
-
+    private String kommentar;
+    
     // Konstruktoren
     public Kursteilnahme() {
     }
-
-    public Kursteilnahme(int mitgliederID, int kursterminID, boolean anmeldbar, 
-                         Timestamp anmeldezeit, boolean aktiv) {
+    
+    public Kursteilnahme(int mitgliederID, int kursterminID) {
         this.mitgliederID = mitgliederID;
         this.kursterminID = kursterminID;
-        this.anmeldbar = anmeldbar;
-        this.anmeldezeit = anmeldezeit;
-        this.aktiv = aktiv;
     }
-
+    
     // Getter und Setter
     public int getMitgliederID() {
         return mitgliederID;
     }
-
+    
     public void setMitgliederID(int mitgliederID) {
         this.mitgliederID = mitgliederID;
     }
-
+    
     public int getKursterminID() {
         return kursterminID;
     }
-
+    
     public void setKursterminID(int kursterminID) {
         this.kursterminID = kursterminID;
     }
-
-    public boolean isAnmeldbar() {
-        return anmeldbar;
+    
+    public boolean isAngemeldet() {
+        return angemeldet;
     }
-
-    public void setAnmeldbar(boolean anmeldbar) {
-        this.anmeldbar = anmeldbar;
+    
+    public void setAngemeldet(boolean angemeldet) {
+        this.angemeldet = angemeldet;
     }
-
+    
     public Timestamp getAnmeldezeit() {
         return anmeldezeit;
     }
-
+    
     public void setAnmeldezeit(Timestamp anmeldezeit) {
         this.anmeldezeit = anmeldezeit;
     }
-
+    
+    public boolean isAbgemeldet() {
+        return abgemeldet;
+    }
+    
+    public void setAbgemeldet(boolean abgemeldet) {
+        this.abgemeldet = abgemeldet;
+    }
+    
+    public Timestamp getAbmeldezeit() {
+        return abmeldezeit;
+    }
+    
+    public void setAbmeldezeit(Timestamp abmeldezeit) {
+        this.abmeldezeit = abmeldezeit;
+    }
+    
     public boolean isAktiv() {
         return aktiv;
     }
-
+    
     public void setAktiv(boolean aktiv) {
         this.aktiv = aktiv;
     }
-
-    @Override
-    public String toString() {
-        return "Kursteilnahme{" +
-                "mitgliederID=" + mitgliederID +
-                ", kursterminID=" + kursterminID +
-                ", anmeldbar=" + anmeldbar +
-                ", anmeldezeit=" + anmeldezeit +
-                ", aktiv=" + aktiv +
-                '}';
+    
+    public String getKommentar() {
+        return kommentar;
+    }
+    
+    public void setKommentar(String kommentar) {
+        this.kommentar = kommentar;
     }
 }

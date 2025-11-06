@@ -15,7 +15,9 @@ public class ConnectionDB {
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
+//        	System.out.println(e.getMessage());
             throw new ConnectionException("Keine Verbindung zur Datenbank möglich.", e);
+            
         }
     }
 }

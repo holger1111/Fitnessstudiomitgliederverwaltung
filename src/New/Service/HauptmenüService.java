@@ -10,42 +10,44 @@ public class HauptmenüService extends BaseService {
     private final KursService kursService;
     private final VertragService vertragService;
     private final ÜbersichtService übersichtService;
-    private final AdminService adminService;
     private final SucheService sucheService;
+//    private final AdminService adminService;
 
-    public HauptmenüService(
-            Connection connection,
-            Scanner scanner,
-            MitgliederService mitgliederService,
-            VerkaufService verkaufService,
-            KursService kursService,
-            VertragService vertragService,
-            ÜbersichtService übersichtService,
-            AdminService adminService
-    ) {
+    public HauptmenüService(Connection connection, Scanner scanner,
+                           MitgliederService mitgliederService,
+                           VerkaufService verkaufService,
+                           KursService kursService,
+                           VertragService vertragService,
+                           ÜbersichtService übersichtService,
+                           SucheService sucheService
+//                           , AdminService adminService
+                           ) {
         super(connection, scanner);
         this.mitgliederService = mitgliederService;
         this.verkaufService = verkaufService;
         this.kursService = kursService;
         this.vertragService = vertragService;
         this.übersichtService = übersichtService;
-        this.adminService = adminService;
-        this.sucheService = new SucheService(connection, scanner);
+        this.sucheService = sucheService;
+//        this.adminService = adminService;
     }
 
     public void start() {
         boolean weiter = true;
+
         while (weiter) {
+            System.out.println();
             System.out.println("==== Hauptmenü ====");
             System.out.println("1 - Übersicht");
             System.out.println("2 - Mitglieder");
             System.out.println("3 - Verkauf");
             System.out.println("4 - Kurse");
             System.out.println("5 - Verträge");
-            System.out.println("6 - Admin");
+//            System.out.println("6 - Admin");
             System.out.println("7 - Suche");
             System.out.println("0 - Programm beenden");
             System.out.print("Bitte eine Zahl eingeben: ");
+
             String eingabe = scanner.nextLine();
 
             switch (eingabe) {
@@ -64,15 +66,11 @@ public class HauptmenüService extends BaseService {
                 case "5":
                     vertragService.start();
                     break;
-                case "6":
-                    adminService.start();
-                    break;
+//                case "6":
+//                    adminService.start();
+//                    break;
                 case "7":
                     sucheService.start();
-                    
-                    if (sucheService.exitToMainMenu) {
-                        sucheService.exitToMainMenu = false;
-                    }
                     break;
                 case "0":
                     System.out.println("Programm wird beendet.");
@@ -81,6 +79,7 @@ public class HauptmenüService extends BaseService {
                 default:
                     System.out.println("Ungültige Eingabe! Bitte erneut versuchen.");
             }
+
             System.out.println();
         }
     }

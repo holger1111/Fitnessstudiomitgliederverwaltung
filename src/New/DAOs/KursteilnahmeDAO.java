@@ -17,25 +17,58 @@ public class KursteilnahmeDAO extends BaseDAO<Kursteilnahme> {
         super(connection);
     }
 
+    /**
+     * Findet eine Kursteilnahme anhand des zusammengesetzten Primärschlüssels
+     * (MitgliederID + KursterminID)
+     */
     @Override
     public Kursteilnahme findById(int id) throws SQLException, IntException, NotFoundException {
-        // Kursteilnahme hat keinen einzelnen Primary Key, daher nicht direkt umsetzbar
-        // Falls du nach MitgliederID suchen willst, nutze findByMitgliederId()
-        throw new UnsupportedOperationException("Kursteilnahme hat zusammengesetzten Schlüssel. Nutze spezifische Methoden.");
+        throw new UnsupportedOperationException(
+            "Use findByCompositeKey(mitgliederID, kursterminID) instead - no single ID primary key exists");
+    }
+
+    /**
+     * Findet eine Kursteilnahme anhand des zusammengesetzten Primärschlüssels
+     */
+    public Kursteilnahme findByCompositeKey(int mitgliederID, int kursterminID) 
+            throws SQLException, NotFoundException {
+        String sql = "SELECT MitgliederID, KursterminID, Angemeldet, Anmeldezeit, "
+                + "Abgemeldet, Abmeldezeit, Aktiv, Kommentar "
+                + "FROM Kursteilnahme WHERE MitgliederID = ? AND KursterminID = ?";
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setInt(1, mitgliederID);
+            ps.setInt(2, kursterminID);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapRowToKursteilnahme(rs);
+            }
+            throw new NotFoundException(
+                "Kursteilnahme nicht gefunden: MitgliederID=" + mitgliederID 
+                + ", KursterminID=" + kursterminID);
+        } finally {
+            closeResources(rs, ps);
+        }
     }
 
     @Override
     public void insert(Kursteilnahme entity) throws SQLException {
-        String sql = "INSERT INTO Kursteilnahme (MitgliederID, KursterminID, Anmeldbar, Anmeldezeit, Aktiv) " +
-                     "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Kursteilnahme "
+                + "(MitgliederID, KursterminID, Angemeldet, Anmeldezeit, Abgemeldet, Abmeldezeit, Aktiv, Kommentar) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);
             ps.setInt(1, entity.getMitgliederID());
             ps.setInt(2, entity.getKursterminID());
-            ps.setBoolean(3, entity.isAnmeldbar());
+            ps.setBoolean(3, entity.isAngemeldet());
             ps.setTimestamp(4, entity.getAnmeldezeit());
-            ps.setBoolean(5, entity.isAktiv());
+            ps.setBoolean(5, entity.isAbgemeldet());
+            ps.setTimestamp(6, entity.getAbmeldezeit());
+            ps.setBoolean(7, entity.isAktiv());
+            ps.setString(8, entity.getKommentar());
             ps.executeUpdate();
         } finally {
             closeResources(null, ps);
@@ -44,16 +77,20 @@ public class KursteilnahmeDAO extends BaseDAO<Kursteilnahme> {
 
     @Override
     public void update(Kursteilnahme entity) throws SQLException {
-        String sql = "UPDATE Kursteilnahme SET Anmeldbar = ?, Anmeldezeit = ?, Aktiv = ? " +
-                     "WHERE MitgliederID = ? AND KursterminID = ?";
+        String sql = "UPDATE Kursteilnahme SET Angemeldet = ?, Anmeldezeit = ?, Abgemeldet = ?, "
+                + "Abmeldezeit = ?, Aktiv = ?, Kommentar = ? "
+                + "WHERE MitgliederID = ? AND KursterminID = ?";
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);
-            ps.setBoolean(1, entity.isAnmeldbar());
+            ps.setBoolean(1, entity.isAngemeldet());
             ps.setTimestamp(2, entity.getAnmeldezeit());
-            ps.setBoolean(3, entity.isAktiv());
-            ps.setInt(4, entity.getMitgliederID());
-            ps.setInt(5, entity.getKursterminID());
+            ps.setBoolean(3, entity.isAbgemeldet());
+            ps.setTimestamp(4, entity.getAbmeldezeit());
+            ps.setBoolean(5, entity.isAktiv());
+            ps.setString(6, entity.getKommentar());
+            ps.setInt(7, entity.getMitgliederID());
+            ps.setInt(8, entity.getKursterminID());
             ps.executeUpdate();
         } finally {
             closeResources(null, ps);
@@ -62,10 +99,14 @@ public class KursteilnahmeDAO extends BaseDAO<Kursteilnahme> {
 
     @Override
     public void delete(int id) throws SQLException {
-        throw new UnsupportedOperationException("Kursteilnahme hat zusammengesetzten Schlüssel. Nutze delete(mitgliederID, kursterminID).");
+        throw new UnsupportedOperationException(
+            "Use deleteByCompositeKey(mitgliederID, kursterminID) instead - no single ID primary key exists");
     }
 
-    public void delete(int mitgliederID, int kursterminID) throws SQLException {
+    /**
+     * Löscht eine Kursteilnahme anhand des zusammengesetzten Primärschlüssels
+     */
+    public void deleteByCompositeKey(int mitgliederID, int kursterminID) throws SQLException {
         String sql = "DELETE FROM Kursteilnahme WHERE MitgliederID = ? AND KursterminID = ?";
         PreparedStatement ps = null;
         try {
@@ -78,10 +119,29 @@ public class KursteilnahmeDAO extends BaseDAO<Kursteilnahme> {
         }
     }
 
+    public List<Kursteilnahme> findAll() throws SQLException {
+        List<Kursteilnahme> teilnahmen = new ArrayList<>();
+        String sql = "SELECT MitgliederID, KursterminID, Angemeldet, Anmeldezeit, "
+                + "Abgemeldet, Abmeldezeit, Aktiv, Kommentar FROM Kursteilnahme";
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = connection.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                teilnahmen.add(mapRowToKursteilnahme(rs));
+            }
+        } finally {
+            closeResources(rs, ps);
+        }
+        return teilnahmen;
+    }
+
     public List<Kursteilnahme> findByMitgliederId(int mitgliederID) throws SQLException {
         List<Kursteilnahme> teilnahmen = new ArrayList<>();
-        String sql = "SELECT MitgliederID, KursterminID, Anmeldbar, Anmeldezeit, Aktiv " +
-                     "FROM Kursteilnahme WHERE MitgliederID = ?";
+        String sql = "SELECT MitgliederID, KursterminID, Angemeldet, Anmeldezeit, "
+                + "Abgemeldet, Abmeldezeit, Aktiv, Kommentar "
+                + "FROM Kursteilnahme WHERE MitgliederID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -99,8 +159,9 @@ public class KursteilnahmeDAO extends BaseDAO<Kursteilnahme> {
 
     public List<Kursteilnahme> findByKursterminId(int kursterminID) throws SQLException {
         List<Kursteilnahme> teilnahmen = new ArrayList<>();
-        String sql = "SELECT MitgliederID, KursterminID, Anmeldbar, Anmeldezeit, Aktiv " +
-                     "FROM Kursteilnahme WHERE KursterminID = ?";
+        String sql = "SELECT MitgliederID, KursterminID, Angemeldet, Anmeldezeit, "
+                + "Abgemeldet, Abmeldezeit, Aktiv, Kommentar "
+                + "FROM Kursteilnahme WHERE KursterminID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -116,30 +177,46 @@ public class KursteilnahmeDAO extends BaseDAO<Kursteilnahme> {
         return teilnahmen;
     }
 
-    public List<Kursteilnahme> findAll() throws SQLException {
-        List<Kursteilnahme> teilnahmen = new ArrayList<>();
-        String sql = "SELECT MitgliederID, KursterminID, Anmeldbar, Anmeldezeit, Aktiv FROM Kursteilnahme";
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            ps = connection.prepareStatement(sql);
-            rs = ps.executeQuery();
+    public List<Kursteilnahme> searchAllAttributes(String searchTerm) throws SQLException {
+        List<Kursteilnahme> results = new ArrayList<>();
+
+        String sql = "SELECT MitgliederID, KursterminID, Angemeldet, Anmeldezeit, "
+                + "Abgemeldet, Abmeldezeit, Aktiv, Kommentar "
+                + "FROM Kursteilnahme "
+                + "WHERE CAST(MitgliederID AS CHAR) LIKE ? "
+                + "OR CAST(KursterminID AS CHAR) LIKE ? "
+                + "OR CAST(Anmeldezeit AS CHAR) LIKE ? "
+                + "OR CAST(Abmeldezeit AS CHAR) LIKE ? "
+                + "OR Kommentar LIKE ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            String searchPattern = "%" + searchTerm + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            pstmt.setString(3, searchPattern);
+            pstmt.setString(4, searchPattern);
+            pstmt.setString(5, searchPattern);
+
+            ResultSet rs = pstmt.executeQuery();
+
             while (rs.next()) {
-                teilnahmen.add(mapRowToKursteilnahme(rs));
+                results.add(mapRowToKursteilnahme(rs));
             }
-        } finally {
-            closeResources(rs, ps);
         }
-        return teilnahmen;
+
+        return results;
     }
 
     private Kursteilnahme mapRowToKursteilnahme(ResultSet rs) throws SQLException {
         Kursteilnahme teilnahme = new Kursteilnahme();
         teilnahme.setMitgliederID(rs.getInt("MitgliederID"));
         teilnahme.setKursterminID(rs.getInt("KursterminID"));
-        teilnahme.setAnmeldbar(rs.getBoolean("Anmeldbar"));
+        teilnahme.setAngemeldet(rs.getBoolean("Angemeldet"));
         teilnahme.setAnmeldezeit(rs.getTimestamp("Anmeldezeit"));
+        teilnahme.setAbgemeldet(rs.getBoolean("Abgemeldet"));
+        teilnahme.setAbmeldezeit(rs.getTimestamp("Abmeldezeit"));
         teilnahme.setAktiv(rs.getBoolean("Aktiv"));
+        teilnahme.setKommentar(rs.getString("Kommentar"));
         return teilnahme;
     }
 }
