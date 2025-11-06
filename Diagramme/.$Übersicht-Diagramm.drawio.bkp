@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
   <diagram name="Seite-1" id="zzxEcZ35fmAeOjfYB8Wm">
-    <mxGraphModel dx="1831" dy="1189" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2786" dy="989" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -49,17 +49,20 @@
         <mxCell id="eLWMT8YkaDoKswLNRPLK-19" value="Anwendungslogik&lt;div&gt;Business Layer&lt;/div&gt;" style="swimlane;whiteSpace=wrap;html=1;startSize=40;" vertex="1" parent="1">
           <mxGeometry x="-80" y="520" width="640" height="280" as="geometry" />
         </mxCell>
-        <mxCell id="eLWMT8YkaDoKswLNRPLK-35" value="Service Layer" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-19">
-          <mxGeometry y="40" width="160" height="160" as="geometry" />
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-35" value="Service Layer&lt;div&gt;Service-Klassen&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-19">
+          <mxGeometry y="40" width="160" height="240" as="geometry" />
         </mxCell>
-        <mxCell id="eLWMT8YkaDoKswLNRPLK-36" value="Bündelt Geschäftslogik" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-35">
-          <mxGeometry y="40" width="160" height="40" as="geometry" />
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-36" value="Bündelt Geschäftslogik in wiederverwendbare Einheiten" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-35">
+          <mxGeometry y="40" width="160" height="80" as="geometry" />
         </mxCell>
         <mxCell id="eLWMT8YkaDoKswLNRPLK-37" value="Vermittelt zwischen Controll und Datenhaltung" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-35">
-          <mxGeometry y="80" width="160" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="eLWMT8YkaDoKswLNRPLK-38" value="Klare Schnittstellen und Wiederverwendbarkeit" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-35">
           <mxGeometry y="120" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-38" value="Klare Schnittstellen für Präsentationsschicht" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-35">
+          <mxGeometry y="160" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-81" value="Koordiniert Zugriff auf DAO, Managers und Objects" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-35">
+          <mxGeometry y="200" width="160" height="40" as="geometry" />
         </mxCell>
         <mxCell id="eLWMT8YkaDoKswLNRPLK-39" value="Command Pattern" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-19">
           <mxGeometry x="160" y="40" width="160" height="200" as="geometry" />
@@ -173,7 +176,46 @@
           <mxGeometry y="120" width="160" height="40" as="geometry" />
         </mxCell>
         <mxCell id="eLWMT8YkaDoKswLNRPLK-68" value="Klassen" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;startSize=40;" vertex="1" parent="1">
-          <mxGeometry x="560" y="520" width="630" height="280" as="geometry" />
+          <mxGeometry x="560" y="520" width="720" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-69" value="Exceptions" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-68">
+          <mxGeometry x="40" width="160" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-70" value="Exceptions der GUI sollten abgefangen und ggf an Nutzer kommuniziert werden" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-69">
+          <mxGeometry y="40" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-71" value="Exceptions der Logik sollten abgefangen werden, um die Funktionalität sicherzustellen" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-69">
+          <mxGeometry y="120" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-72" value="Datenbank-Exceptions werden idR von DAO, Repository ausgelöst und an Logik geleitet" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-69">
+          <mxGeometry y="200" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-73" value="Objects" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-68">
+          <mxGeometry x="200" width="160" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-74" value="GUI verwendet Objects zur Darstellung, ohne sie logisch zu ändern" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-73">
+          <mxGeometry y="40" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-75" value="Logik in Objects wird im Business Layer verwendet, um mit den Daten zu arbeiten" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-73">
+          <mxGeometry y="120" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-76" value="Datenbank und DAO nutzt Objects als Container für Daten" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-73">
+          <mxGeometry y="200" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-77" value="Managers" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-68">
+          <mxGeometry x="360" width="160" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-79" value="Strukturiert Verantwortung und trennt Logikschicht von den anderen Schichten" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-77">
+          <mxGeometry y="40" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-80" value="Bieten Transaktionskontrolle" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-77">
+          <mxGeometry y="120" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-82" value="Validators" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-68">
+          <mxGeometry x="520" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="eLWMT8YkaDoKswLNRPLK-83" value="Validieren Eingaben aus der GUI auf Richtigkeit und Entschärfen mögliche Gefahren" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="eLWMT8YkaDoKswLNRPLK-82">
+          <mxGeometry y="40" width="160" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
