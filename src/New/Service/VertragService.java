@@ -24,7 +24,6 @@ import New.Exception.StringException;
 import New.Objekte.Intervall;
 import New.Objekte.Mitglieder;
 import New.Objekte.MitgliederVertrag;
-import New.Objekte.Ort;
 import New.Objekte.Vertrag;
 import New.Objekte.Zahlungsdaten;
 import New.Validator.BICValidator;

@@ -14,6 +14,10 @@ import New.Helper.Datum;
 import New.Helper.DatumHelper;
 import New.Manager.MitgliederManager;
 import New.Manager.VertragManager;
+import New.Manager.VerkaufManager;
+import New.Objekte.Artikel;
+import New.Objekte.ArtikelBestellung;
+import New.Objekte.Bestellung;
 import New.Objekte.Intervall;
 import New.Objekte.Mitglieder;
 import New.Objekte.MitgliederVertrag;
@@ -30,20 +34,47 @@ public class SucheService extends BaseService {
         System.out.print("Bitte Suchbegriff eingeben: ");
         String suchbegriff = scanner.nextLine();
         try {
-            // Suche in beiden Bereichen
+            // Manager initialisieren
             MitgliederManager mitgliederManager = new MitgliederManager();
             VertragManager vertragManager = new VertragManager();
+            VerkaufManager verkaufManager = new VerkaufManager();
             
+            // Suche in allen Bereichen
             List<Mitglieder> mitgliederErgebnis = mitgliederManager.search(suchbegriff);
             List<MitgliederVertrag> vertragErgebnis = vertragManager.search(suchbegriff);
             
+            // NEU: Suche in Verkaufsdaten (Bestellung, Artikel, ArtikelBestellung)
+            List<Bestellung> bestellungErgebnis = verkaufManager.getBestellungDAO().searchAllAttributes(suchbegriff);
+            List<Artikel> artikelErgebnis = verkaufManager.getArtikelDAO().searchAllAttributes(suchbegriff);
+            
             // Kombiniere Ergebnisse: alle Mitglieder-IDs sammeln
             Set<Integer> mitgliederIDs = new HashSet<>();
+            
+            // Von Mitglieder-Suche
             for (Mitglieder m : mitgliederErgebnis) {
                 mitgliederIDs.add(m.getMitgliederID());
             }
+            
+            // Von Vertrag-Suche
             for (MitgliederVertrag mv : vertragErgebnis) {
                 mitgliederIDs.add(mv.getMitgliederID());
+            }
+            
+            // NEU: Von Bestellung-Suche
+            for (Bestellung b : bestellungErgebnis) {
+                mitgliederIDs.add(b.getMitgliederID());
+            }
+            
+            // NEU: Von Artikel-Suche (über ArtikelBestellung zu Bestellung zu Mitglied)
+            for (Artikel artikel : artikelErgebnis) {
+                List<ArtikelBestellung> artikelBestellungen = 
+                    verkaufManager.getArtikelBestellungDAO().findByArtikelId(artikel.getArtikelID());
+                for (ArtikelBestellung ab : artikelBestellungen) {
+                    Bestellung bestellung = verkaufManager.getBestellungDAO().findById(ab.getBestellungID());
+                    if (bestellung != null) {
+                        mitgliederIDs.add(bestellung.getMitgliederID());
+                    }
+                }
             }
             
             if (mitgliederIDs.isEmpty()) {
@@ -105,7 +136,7 @@ public class SucheService extends BaseService {
                     if (mitgliederIDs.contains(mitgliederID)) {
                         Mitglieder ausgewählt = mitgliederManager.getMitgliederDAO().findById(mitgliederID);
                         if (ausgewählt != null) {
-                            zeigeDetail(ausgewählt, mitgliederManager, vertragManager);
+                            zeigeDetail(ausgewählt, mitgliederManager, vertragManager, verkaufManager);
                         }
                     } else {
                         System.out.println("Kein Mitglied mit der eingegebenen MitgliederID gefunden.");
@@ -120,7 +151,8 @@ public class SucheService extends BaseService {
         }
     }
     
-    private void zeigeDetail(Mitglieder ausgewählt, MitgliederManager mitgliederManager, VertragManager vertragManager) throws Exception {
+    private void zeigeDetail(Mitglieder ausgewählt, MitgliederManager mitgliederManager, 
+                             VertragManager vertragManager, VerkaufManager verkaufManager) throws Exception {
         boolean exitDetail = false;
         int tab = 1;
         
@@ -135,6 +167,9 @@ public class SucheService extends BaseService {
                     break;
                 case 3:
                     showZahlungsdaten(ausgewählt);
+                    break;
+                case 5:
+                    showVerkauf(ausgewählt, verkaufManager);
                     break;
                 default:
                     System.out.println("(Tab nicht belegt)");
@@ -160,8 +195,6 @@ public class SucheService extends BaseService {
         }
     }
 
-
-    
     // ---- Gemeinsame Hilfsmethoden ----
     public void showStammdaten(Mitglieder ausgewaehlt) {
         String vorname = ausgewaehlt.getVorname() != null ? ausgewaehlt.getVorname() : "-";
@@ -264,7 +297,6 @@ public class SucheService extends BaseService {
     }
     
     public void showZahlungsdaten(Mitglieder ausgewaehlt) {
-        // Hole Zahlungsdaten-Objekt
         New.Objekte.Zahlungsdaten zahlungsdaten = ausgewaehlt.getZahlungsdaten();
         
         if (zahlungsdaten == null) {
@@ -272,14 +304,67 @@ public class SucheService extends BaseService {
             return;
         }
         
-        // Extrahiere Daten mit Null-Checks
         String vorname = ausgewaehlt.getVorname() != null ? ausgewaehlt.getVorname() : "-";
         String nachname = ausgewaehlt.getNachname() != null ? ausgewaehlt.getNachname() : "-";
         String iban = zahlungsdaten.getIBAN() != null ? zahlungsdaten.getIBAN() : "-";
         String bic = zahlungsdaten.getBIC() != null ? zahlungsdaten.getBIC() : "-";
         
-        // Formatierte Ausgabe
         System.out.printf("\nName:\t%s %s\nIBAN:\t%s\nBIC:\t%s\n", vorname, nachname, iban, bic);
+    }
+
+ // NEU: Tab 5 - Verkauf mit sauberer Tabellenformatierung
+    public void showVerkauf(Mitglieder ausgewaehlt, VerkaufManager manager) throws Exception {
+        List<Bestellung> bestellungen = manager.findByMitgliederId(ausgewaehlt.getMitgliederID());
+        
+        if (bestellungen == null || bestellungen.isEmpty()) {
+            System.out.println("\nDas Mitglied hat keine Bestellungen.");
+            return;
+        }
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        
+        for (Bestellung bestellung : bestellungen) {
+            System.out.printf("\n--- Bestellung ID: %d ---\n", bestellung.getBestellungID());
+            System.out.printf("Datum:\t\t%s\n", 
+                bestellung.getBestelldatum() != null ? sdf.format(bestellung.getBestelldatum()) : "-");
+            System.out.printf("Gesamtpreis:\t%.2f €\n\n", bestellung.getGesamtpreis());
+            
+            // Artikel in dieser Bestellung
+            List<ArtikelBestellung> artikelBestellungen = 
+                manager.findArtikelBestellungen(bestellung.getBestellungID());
+            
+            if (!artikelBestellungen.isEmpty()) {
+                System.out.println("Artikel:");
+                // ✅ NEUE SAUBERE TABELLENFORMATIERUNG
+                System.out.printf("%-30s | %5s | %12s | %12s%n", "Name", "Menge", "Einzelpreis", "Summe");
+                System.out.println("=".repeat(70));
+                
+                for (ArtikelBestellung ab : artikelBestellungen) {
+                    Artikel artikel = manager.getArtikelDAO().findById(ab.getArtikelID());
+                    if (artikel != null) {
+                        String name = artikel.getName() != null ? artikel.getName() : "-";
+                        
+                        // Name auf maximal 30 Zeichen begrenzen
+                        if (name.length() > 30) {
+                            name = name.substring(0, 27) + "...";
+                        }
+                        
+                        // Einzelpreis berechnen
+                        double einzelpreis = ab.getMenge() > 0 ? ab.getAufaddiert() / ab.getMenge() : 0;
+                        
+                        // ✅ FORMATIERTE AUSGABE
+                        System.out.printf("%-30s | %5d | %12s | %12s%n",
+                            name,
+                            ab.getMenge(),
+                            String.format("%,.2f €", einzelpreis),
+                            String.format("%,.2f €", ab.getAufaddiert())
+                        );
+                    }
+                }
+                
+                System.out.println("=".repeat(70));
+            }
+        }
     }
 
     

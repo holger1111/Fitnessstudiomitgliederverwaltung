@@ -11,6 +11,7 @@ public class HauptmenüService extends BaseService {
     private final VertragService vertragService;
     private final ÜbersichtService übersichtService;
     private final AdminService adminService;
+    private final SucheService sucheService;
 
     public HauptmenüService(
             Connection connection,
@@ -29,6 +30,7 @@ public class HauptmenüService extends BaseService {
         this.vertragService = vertragService;
         this.übersichtService = übersichtService;
         this.adminService = adminService;
+        this.sucheService = new SucheService(connection, scanner);
     }
 
     public void start() {
@@ -41,6 +43,7 @@ public class HauptmenüService extends BaseService {
             System.out.println("4 - Kurse");
             System.out.println("5 - Verträge");
             System.out.println("6 - Admin");
+            System.out.println("7 - Suche");
             System.out.println("0 - Programm beenden");
             System.out.print("Bitte eine Zahl eingeben: ");
             String eingabe = scanner.nextLine();
@@ -63,6 +66,13 @@ public class HauptmenüService extends BaseService {
                     break;
                 case "6":
                     adminService.start();
+                    break;
+                case "7":
+                    sucheService.start();
+                    
+                    if (sucheService.exitToMainMenu) {
+                        sucheService.exitToMainMenu = false;
+                    }
                     break;
                 case "0":
                     System.out.println("Programm wird beendet.");
