@@ -168,8 +168,9 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
     public void insert(Mitglieder entity) throws SQLException {
         String sql = "INSERT INTO Mitglieder (Vorname, Nachname, Telefon, Geburtsdatum, Aktiv, Straße, Hausnr, OrtID, ZahlungsdatenID, Mail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, entity.getVorname());
             ps.setString(2, entity.getNachname());
             ps.setString(3, entity.getTelefon());
@@ -181,8 +182,13 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
             ps.setInt(9, entity.getZahlungsdatenID());
             ps.setString(10, entity.getMail());
             ps.executeUpdate();
+            
+            rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                entity.setMitgliederID(rs.getInt(1));
+            }
         } finally {
-            closeResources(null, ps);
+            closeResources(rs, ps);
         }
     }
 

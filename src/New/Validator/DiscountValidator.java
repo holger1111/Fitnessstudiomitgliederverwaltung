@@ -17,7 +17,7 @@ public class DiscountValidator extends BaseValidator<MitgliederVertrag> {
         Double rabatt = mv.getPreisrabatt();
         Double grundpreis = vertrag.getGrundpreis();
         if (rabatt == null) rabatt = 0.0;
-        if (grundpreis == null) grundpreis = 0.0;
+//        if (grundpreis == null) grundpreis = 0.0;
         if (rabatt > grundpreis) {
             String msg = "Der Rabatt (" + rabatt + ") ist größer als der Grundpreis (" + grundpreis + ")!";
             errors.add(msg);

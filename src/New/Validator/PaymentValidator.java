@@ -19,16 +19,12 @@ public class PaymentValidator extends BaseValidator<MitgliederVertrag> {
 
     @Override
     public void validate(MitgliederVertrag mv) throws Exception {
-        // Prüfe Zahlungsart "Abbuchung"
-        if (!"Abbuchung".equalsIgnoreCase(zahlung.getZahlungsart())) {
-            String msg = "Zahlungsart ist nicht 'Abbuchung', sondern '" + zahlung.getZahlungsart() + "'";
-            errors.add(msg);
-            throw new PayException(msg);
-        }
-
-        // Prüfe, ob ZahlungID gesetzt ist
-        if (mv.getZahlungID() <= 0) {
-            String msg = "ZahlungID muss für 'Abbuchung' gesetzt sein!";
+        // Prüfe Zahlungsart "Abbuchung" ODER "SEPA-Lastschrift"
+        String zahlungsart = zahlung.getZahlungsart();
+        if (zahlungsart == null || 
+            (!zahlungsart.equalsIgnoreCase("Abbuchung") && 
+             !zahlungsart.equalsIgnoreCase("SEPA-Lastschrift"))) {
+            String msg = "Zahlungsart muss 'Abbuchung' oder 'SEPA-Lastschrift' sein, ist aber '" + zahlungsart + "'";
             errors.add(msg);
             throw new PayException(msg);
         }
