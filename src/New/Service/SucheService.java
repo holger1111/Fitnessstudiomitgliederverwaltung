@@ -15,6 +15,7 @@ import New.Helper.DatumHelper;
 import New.Manager.MitgliederManager;
 import New.Manager.VertragManager;
 import New.Manager.VerkaufManager;
+import New.Manager.KursManager;
 import New.Objekte.Artikel;
 import New.Objekte.ArtikelBestellung;
 import New.Objekte.Bestellung;
@@ -23,6 +24,10 @@ import New.Objekte.Mitglieder;
 import New.Objekte.MitgliederVertrag;
 import New.Objekte.Ort;
 import New.Objekte.Vertrag;
+import New.Objekte.Kurs;
+import New.Objekte.Kurstermin;
+import New.Objekte.Kursteilnahme;
+import New.Objekte.Trainer;
 
 public class SucheService extends BaseService {
 
@@ -38,14 +43,20 @@ public class SucheService extends BaseService {
             MitgliederManager mitgliederManager = new MitgliederManager();
             VertragManager vertragManager = new VertragManager();
             VerkaufManager verkaufManager = new VerkaufManager();
+            KursManager kursManager = new KursManager(); // NEU
             
             // Suche in allen Bereichen
             List<Mitglieder> mitgliederErgebnis = mitgliederManager.search(suchbegriff);
             List<MitgliederVertrag> vertragErgebnis = vertragManager.search(suchbegriff);
             
-            // NEU: Suche in Verkaufsdaten (Bestellung, Artikel, ArtikelBestellung)
+            // Suche in Verkaufsdaten (Bestellung, Artikel, ArtikelBestellung)
             List<Bestellung> bestellungErgebnis = verkaufManager.getBestellungDAO().searchAllAttributes(suchbegriff);
             List<Artikel> artikelErgebnis = verkaufManager.getArtikelDAO().searchAllAttributes(suchbegriff);
+            
+            // NEU: Suche in Kursdaten (Kurs, Kurstermin, Trainer, Kursteilnahme)
+            List<Kurs> kursErgebnis = kursManager.search(suchbegriff);
+            List<Trainer> trainerErgebnis = kursManager.getTrainerDAO().searchAllAttributes(suchbegriff);
+            List<Kurstermin> kursterminErgebnis = kursManager.getKursterminDAO().searchAllAttributes(suchbegriff);
             
             // Kombiniere Ergebnisse: alle Mitglieder-IDs sammeln
             Set<Integer> mitgliederIDs = new HashSet<>();
@@ -60,12 +71,12 @@ public class SucheService extends BaseService {
                 mitgliederIDs.add(mv.getMitgliederID());
             }
             
-            // NEU: Von Bestellung-Suche
+            // Von Bestellung-Suche
             for (Bestellung b : bestellungErgebnis) {
                 mitgliederIDs.add(b.getMitgliederID());
             }
             
-            // NEU: Von Artikel-Suche (über ArtikelBestellung zu Bestellung zu Mitglied)
+            // Von Artikel-Suche (über ArtikelBestellung zu Bestellung zu Mitglied)
             for (Artikel artikel : artikelErgebnis) {
                 List<ArtikelBestellung> artikelBestellungen = 
                     verkaufManager.getArtikelBestellungDAO().findByArtikelId(artikel.getArtikelID());
@@ -74,6 +85,36 @@ public class SucheService extends BaseService {
                     if (bestellung != null) {
                         mitgliederIDs.add(bestellung.getMitgliederID());
                     }
+                }
+            }
+            
+            // NEU: Von Kurs-Suche (über Kurstermin zu Kursteilnahme zu Mitglied)
+            for (Kurs kurs : kursErgebnis) {
+                List<Kurstermin> termine = kursManager.findTermineByKursId(kurs.getKursID());
+                for (Kurstermin termin : termine) {
+                    List<Kursteilnahme> teilnahmen = kursManager.findTeilnahmenByKursterminId(termin.getKursterminID());
+                    for (Kursteilnahme teilnahme : teilnahmen) {
+                        mitgliederIDs.add(teilnahme.getMitgliederID());
+                    }
+                }
+            }
+            
+            // NEU: Von Trainer-Suche (über Kurstermin zu Kursteilnahme zu Mitglied)
+            for (Trainer trainer : trainerErgebnis) {
+                List<Kurstermin> termine = kursManager.findTermineByTrainerId(trainer.getTrainerID());
+                for (Kurstermin termin : termine) {
+                    List<Kursteilnahme> teilnahmen = kursManager.findTeilnahmenByKursterminId(termin.getKursterminID());
+                    for (Kursteilnahme teilnahme : teilnahmen) {
+                        mitgliederIDs.add(teilnahme.getMitgliederID());
+                    }
+                }
+            }
+            
+            // NEU: Von Kurstermin-Suche (zu Kursteilnahme zu Mitglied)
+            for (Kurstermin termin : kursterminErgebnis) {
+                List<Kursteilnahme> teilnahmen = kursManager.findTeilnahmenByKursterminId(termin.getKursterminID());
+                for (Kursteilnahme teilnahme : teilnahmen) {
+                    mitgliederIDs.add(teilnahme.getMitgliederID());
                 }
             }
             
@@ -136,7 +177,7 @@ public class SucheService extends BaseService {
                     if (mitgliederIDs.contains(mitgliederID)) {
                         Mitglieder ausgewählt = mitgliederManager.getMitgliederDAO().findById(mitgliederID);
                         if (ausgewählt != null) {
-                            zeigeDetail(ausgewählt, mitgliederManager, vertragManager, verkaufManager);
+                            zeigeDetail(ausgewählt, mitgliederManager, vertragManager, verkaufManager, kursManager);
                         }
                     } else {
                         System.out.println("Kein Mitglied mit der eingegebenen MitgliederID gefunden.");
@@ -152,7 +193,8 @@ public class SucheService extends BaseService {
     }
     
     private void zeigeDetail(Mitglieder ausgewählt, MitgliederManager mitgliederManager, 
-                             VertragManager vertragManager, VerkaufManager verkaufManager) throws Exception {
+                             VertragManager vertragManager, VerkaufManager verkaufManager,
+                             KursManager kursManager) throws Exception {
         boolean exitDetail = false;
         int tab = 1;
         
@@ -167,6 +209,9 @@ public class SucheService extends BaseService {
                     break;
                 case 3:
                     showZahlungsdaten(ausgewählt);
+                    break;
+                case 4: // NEU: Tab 4 - Kurse
+                    showKurse(ausgewählt, kursManager);
                     break;
                 case 5:
                     showVerkauf(ausgewählt, verkaufManager);
@@ -312,7 +357,53 @@ public class SucheService extends BaseService {
         System.out.printf("\nName:\t%s %s\nIBAN:\t%s\nBIC:\t%s\n", vorname, nachname, iban, bic);
     }
 
- // NEU: Tab 5 - Verkauf mit sauberer Tabellenformatierung
+    // NEU: Tab 4 - Kurse mit sauberer Tabellenformatierung
+    public void showKurse(Mitglieder ausgewaehlt, KursManager manager) throws Exception {
+        List<Kursteilnahme> teilnahmen = manager.findTeilnahmenByMitgliedId(ausgewaehlt.getMitgliederID());
+        
+        if (teilnahmen == null || teilnahmen.isEmpty()) {
+            System.out.println("\nDas Mitglied hat keine Kursteilnahmen.");
+            return;
+        }
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        
+        System.out.println("\n=== Kursteilnahmen ===");
+        System.out.printf("%-30s | %-20s | %-20s | %-6s%n", "Kurs", "Trainer", "Termin", "Aktiv");
+        System.out.println("=".repeat(90));
+        
+        for (Kursteilnahme teilnahme : teilnahmen) {
+            Kurstermin termin = manager.getKursterminDAO().findById(teilnahme.getKursterminID());
+            
+            if (termin != null) {
+                Kurs kurs = manager.getKursDAO().findById(termin.getKursID());
+                Trainer trainer = manager.getTrainerDAO().findById(termin.getTrainerID());
+                
+                String kursName = kurs != null ? kurs.getBezeichnung() : "-";
+                String trainerName = trainer != null ? trainer.getVorname() + " " + trainer.getNachname() : "-";
+                String terminZeit = termin.getTermin() != null ? sdf.format(termin.getTermin()) : "-";
+                
+                // Name auf maximal 30 Zeichen begrenzen
+                if (kursName.length() > 30) {
+                    kursName = kursName.substring(0, 27) + "...";
+                }
+                if (trainerName.length() > 20) {
+                    trainerName = trainerName.substring(0, 17) + "...";
+                }
+                
+                System.out.printf("%-30s | %-20s | %-20s | %-6s%n",
+                    kursName,
+                    trainerName,
+                    terminZeit,
+                    teilnahme.isAktiv() ? "X" : ""
+                );
+            }
+        }
+        
+        System.out.println("=".repeat(90));
+    }
+
+    // Tab 5 - Verkauf mit sauberer Tabellenformatierung
     public void showVerkauf(Mitglieder ausgewaehlt, VerkaufManager manager) throws Exception {
         List<Bestellung> bestellungen = manager.findByMitgliederId(ausgewaehlt.getMitgliederID());
         
@@ -335,7 +426,6 @@ public class SucheService extends BaseService {
             
             if (!artikelBestellungen.isEmpty()) {
                 System.out.println("Artikel:");
-                // ✅ NEUE SAUBERE TABELLENFORMATIERUNG
                 System.out.printf("%-30s | %5s | %12s | %12s%n", "Name", "Menge", "Einzelpreis", "Summe");
                 System.out.println("=".repeat(70));
                 
@@ -352,7 +442,6 @@ public class SucheService extends BaseService {
                         // Einzelpreis berechnen
                         double einzelpreis = ab.getMenge() > 0 ? ab.getAufaddiert() / ab.getMenge() : 0;
                         
-                        // ✅ FORMATIERTE AUSGABE
                         System.out.printf("%-30s | %5d | %12s | %12s%n",
                             name,
                             ab.getMenge(),
@@ -366,7 +455,6 @@ public class SucheService extends BaseService {
             }
         }
     }
-
     
     public int getWochenBisErster(Date today, MitgliederVertrag mv) {
         Datum beginn = new Datum(mv.getVertragsbeginn());
