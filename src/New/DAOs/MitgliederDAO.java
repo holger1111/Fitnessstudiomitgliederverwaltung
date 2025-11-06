@@ -26,12 +26,11 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
     
     public List<Mitglieder> searchAllAttributes(String searchTerm) throws SQLException {
         List<Mitglieder> results = new ArrayList<>();
-        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Straße, m.Hausnr, \r\n"
-        		+ "       m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail \r\n"
-        		+ "FROM Mitglieder AS m \r\n"
-        		+ "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID \r\n"
-        		+ "WHERE " +
-                     "Vorname LIKE ? OR Nachname LIKE ? OR Mail LIKE ? OR Telefon LIKE ?";
+        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Aktiv, m.Straße, m.Hausnr, " +
+                     "m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail " +
+                     "FROM Mitglieder AS m " +
+                     "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID " +
+                     "WHERE Vorname LIKE ? OR Nachname LIKE ? OR Mail LIKE ? OR Telefon LIKE ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             String pattern = "%" + searchTerm + "%";
             for (int i = 1; i <= 4; i++) {
@@ -48,11 +47,11 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
     
     public List<Mitglieder> findByOrtId(int ortId) throws SQLException {
         List<Mitglieder> results = new ArrayList<>();
-        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Straße, m.Hausnr, \r\n"
-        		+ "       m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail \r\n"
-        		+ "FROM Mitglieder AS m \r\n"
-        		+ "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID \r\n"
-        		+ "WHERE m.OrtID = ?";
+        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Aktiv, m.Straße, m.Hausnr, " +
+                     "m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail " +
+                     "FROM Mitglieder AS m " +
+                     "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID " +
+                     "WHERE m.OrtID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, ortId);
             ResultSet rs = stmt.executeQuery();
@@ -66,11 +65,11 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
 
     public List<Mitglieder> findByZahlungsdatenId(int zahlungsdatenId) throws SQLException {
         List<Mitglieder> results = new ArrayList<>();
-        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Straße, m.Hausnr, \r\n"
-        		+ "       m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail \r\n"
-        		+ "FROM Mitglieder AS m \r\n"
-        		+ "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID \r\n"
-        		+ "WHERE m.ZahlungsdatenID = ?";
+        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Aktiv, m.Straße, m.Hausnr, " +
+                     "m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail " +
+                     "FROM Mitglieder AS m " +
+                     "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID " +
+                     "WHERE m.ZahlungsdatenID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, zahlungsdatenId);
             ResultSet rs = stmt.executeQuery();
@@ -84,11 +83,11 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
 
     public List<Mitglieder> findByInteressentenId(int mitgliederID) throws SQLException {
         List<Mitglieder> results = new ArrayList<>();
-        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Straße, m.Hausnr, \r\n"
-        		+ "       m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail \r\n"
-        		+ "FROM Mitglieder AS m \r\n"
-        		+ "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID \r\n"
-        		+ "WHERE MitgliederID = ?";
+        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Aktiv, m.Straße, m.Hausnr, " +
+                     "m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail " +
+                     "FROM Mitglieder AS m " +
+                     "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID " +
+                     "WHERE MitgliederID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, mitgliederID);
             ResultSet rs = stmt.executeQuery();
@@ -100,8 +99,6 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
         return results;
     }
 
-
-    
     public int getID(Mitglieder mitglied) {
         return mitglied.getMitgliederID();
     }
@@ -112,14 +109,15 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
         mitglied.setVorname(rs.getString("Vorname"));
         mitglied.setNachname(rs.getString("Nachname"));
         mitglied.setGeburtstag(rs.getDate("Geburtsdatum"));
+        mitglied.setAktiv(rs.getBoolean("Aktiv"));
         mitglied.setStrasse(rs.getString("Straße"));
         mitglied.setHausnr(rs.getString("Hausnr"));
         Ort ort = new Ort(
-                rs.getInt("OrtID"),
-                rs.getString("PLZ"),
-                rs.getString("Ort") 
-            );
-            mitglied.setOrt(ort);
+            rs.getInt("OrtID"),
+            rs.getString("PLZ"),
+            rs.getString("Ort") 
+        );
+        mitglied.setOrt(ort);
         mitglied.setZahlungsdatenID(rs.getInt("ZahlungsdatenID"));
         mitglied.setTelefon(rs.getString("Telefon"));
         mitglied.setMail(rs.getString("Mail"));
@@ -128,11 +126,11 @@ public class MitgliederDAO extends BaseDAO<Mitglieder> {
     
     @Override
     public Mitglieder findById(int id) throws SQLException, IntException, NotFoundException {
-        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Straße, m.Hausnr, \r\n"
-        		+ "       m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail \r\n"
-        		+ "FROM Mitglieder AS m \r\n"
-        		+ "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID \r\n"
-        		+ "WHERE m.MitgliederID = ?";
+        String sql = "SELECT m.MitgliederID, m.Vorname, m.Nachname, m.Geburtsdatum, m.Aktiv, m.Straße, m.Hausnr, " +
+                     "m.OrtID, o.PLZ, o.Ort, m.ZahlungsdatenID, m.Telefon, m.Mail " +
+                     "FROM Mitglieder AS m " +
+                     "LEFT JOIN Ort AS o ON o.OrtID = m.OrtID " +
+                     "WHERE m.MitgliederID = ?";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {

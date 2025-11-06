@@ -2,7 +2,7 @@ package New.Validator;
 
 import New.Exception.IntException;
 
-public class IntValidator extends Validator<Object> {
+public class IntValidator extends BaseValidator<Object> {
 
     @Override
     public void validate(Object obj) throws IntException {

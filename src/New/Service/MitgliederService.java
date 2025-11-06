@@ -1,11 +1,16 @@
 package New.Service;
 
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-
+import New.Service.VertragService;
+import New.Objekte.Intervall;
 import New.Objekte.Mitglieder;
+import New.Objekte.MitgliederVertrag;
 import New.Objekte.Ort;
+import New.Objekte.Vertrag;
 import New.Objekte.Zahlungsdaten;
 import New.Validator.BICValidator;
 import New.Validator.EMailValidator;
@@ -14,8 +19,11 @@ import New.Validator.StringValidator;
 import New.DAOs.OrtDAO;
 import New.DAOs.ZahlungsdatenDAO;
 import New.Exception.StringException;
+import New.Helper.Datum;
+import New.Helper.DatumHelper;
 import New.Helper.IO;
 import New.Manager.MitgliederManager;
+import New.Manager.VertragManager;
 
 public class MitgliederService extends BaseService {
 
@@ -47,102 +55,88 @@ public class MitgliederService extends BaseService {
 	}
 
 	public boolean mitgliederSuche() {
-		System.out.print("Bitte Suchbegriff eingeben: ");
-		String suchbegriff = scanner.nextLine();
-		try {
-			MitgliederManager manager = new MitgliederManager();
-			List<Mitglieder> ergebnis = manager.search(suchbegriff);
-			if (ergebnis.isEmpty()) {
-				System.out.println("Keine Mitglieder gefunden.");
-			} else {
-				System.out.printf("%-8s| %-15s| %-15s| %-12s%n", "Mitgl.ID", "Vorname", "Nachname", "Geburtsdatum");
-				System.out.println("--------------------------------------------------------------");
-				for (Mitglieder m : ergebnis) {
-					String gebDatum = "-";
-					if (m.getGeburtstag() != null) {
-						java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd.MM.yyyy");
-						gebDatum = sdf.format(m.getGeburtstag());
-					}
-					System.out.printf("%-8d| %-15s| %-15s| %-12s%n", m.getMitgliederID(), m.getVorname(),
-							m.getNachname(), gebDatum);
-				}
-
-				System.out.println(
-						"\nBitte die MitgliederID des gewünschten Eintrags eingeben (oder Enter zum Abbrechen):");
-				String auswahl = scanner.nextLine();
-				if (!auswahl.isBlank()) {
-					try {
-						int mitgliederID = Integer.parseInt(auswahl);
-						Mitglieder ausgewählt = null;
-						for (Mitglieder m : ergebnis) {
-							if (m.getMitgliederID() == mitgliederID) {
-								ausgewählt = m;
-								break;
-							}
-						}
-						if (ausgewählt != null) {
-							boolean exitDetail = false;
-							int tab = 1; // Start immer mit Stammdaten
-
-							while (!exitDetail) {
-								System.out.println(
-										"\n1 Stammdaten | 2 Mitgliedschaft | 3 Zahlungsdaten | 4 Kurse | 5 Verkauf");
-								switch (tab) {
-								case 1: // Stammdaten
-									showStammdaten(ausgewählt);
-									break;
-								case 2:
-									System.out.println("(Hier Ansicht für Mitgliedschaft einblenden)");
-									break;
-								case 3:
-									System.out.println("(Hier Ansicht für Zahlungsdaten einblenden)");
-									break;
-								case 4:
-									System.out.println("(Hier Ansicht für Kurse einblenden)");
-									break;
-								case 5:
-									System.out.println("(Hier Ansicht für Verkauf einblenden)");
-									break;
-								default:
-									// Nichts, bleibt leer
-									break;
-								}
-								System.out.print("\nTab auswählen (1-5), 6: Zurück, 7: Hauptmenü\n");
-								String tabEingabe = scanner.nextLine();
-								if (tabEingabe.isBlank())
-									continue;
-								if (tabEingabe.equals("6")) {
-									exitDetail = true;
-								} else if (tabEingabe.equals("7")) {
-									return true;
-//									System.exit(0); // Oder setze eine entsprechende Rückkehr-Flag!
-								} else {
-									try {
-										int tabWahl = Integer.parseInt(tabEingabe);
-										if (tabWahl >= 1 && tabWahl <= 5) {
-											tab = tabWahl;
-										}
-									} catch (NumberFormatException ex) {
-										System.out.println("Ungültige Tab-Nummer!");
-									}
-								}
-							}
-						} else {
-							System.out.println("Kein Mitglied mit der eingegebenen MitgliederID gefunden.");
-						}
-					} catch (NumberFormatException e) {
-						System.out.println("Bitte eine gültige MitgliederID eingeben!");
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Fehler bei der Mitgliedersuche: " + (e.getMessage() != null ? e.getMessage() : e));
-		}
-		return false;
+	    System.out.print("Bitte Suchbegriff eingeben: ");
+	    String suchbegriff = scanner.nextLine();
+	    try {
+	        MitgliederManager manager = new MitgliederManager();
+	        List<Mitglieder> ergebnis = manager.search(suchbegriff);
+	        if (ergebnis.isEmpty()) {
+	            System.out.println("Keine Mitglieder gefunden.");
+	        } else {
+	            System.out.printf("%-8s| %-15s| %-15s| %-12s%n", "Mitgl.ID", "Vorname", "Nachname", "Geburtsdatum");
+	            System.out.println("--------------------------------------------------------------");
+	            for (Mitglieder m : ergebnis) {
+	                String gebDatum = "-";
+	                if (m.getGeburtstag() != null) {
+	                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd.MM.yyyy");
+	                    gebDatum = sdf.format(m.getGeburtstag());
+	                }
+	                System.out.printf("%-8d| %-15s| %-15s| %-12s%n", m.getMitgliederID(), m.getVorname(),
+	                        m.getNachname(), gebDatum);
+	            }
+	            System.out.println("\nBitte die MitgliederID des gewünschten Eintrags eingeben (oder Enter zum Abbrechen):");
+	            String auswahl = scanner.nextLine();
+	            if (!auswahl.isBlank()) {
+	                try {
+	                    int mitgliederID = Integer.parseInt(auswahl);
+	                    Mitglieder ausgewählt = null;
+	                    for (Mitglieder m : ergebnis) {
+	                        if (m.getMitgliederID() == mitgliederID) {
+	                            ausgewählt = m;
+	                            break;
+	                        }
+	                    }
+	                    if (ausgewählt != null) {
+	                        boolean exitDetail = false;
+	                        int tab = 1;
+	                        VertragManager vertragManager = new VertragManager();
+	                        while (!exitDetail) {
+	                            System.out.println("\n1 Stammdaten | 2 Mitgliedschaft | 3 Zahlungsdaten | 4 Kurse | 5 Verkauf");
+	                            switch (tab) {
+	                            case 1:
+	                                showStammdaten(ausgewählt);
+	                                break;
+	                            case 2:
+	                                showMitgliedschaft(ausgewählt, vertragManager);
+	                                break;
+	                            default:
+	                                System.out.println("(Tab nicht belegt)");
+	                            }
+	                            System.out.print("\nTab auswählen (1-5), 6: Zurück, 7: Hauptmenü\n");
+	                            String tabEingabe = scanner.nextLine();
+	                            if (tabEingabe.isBlank())
+	                                continue;
+	                            if (tabEingabe.equals("6")) {
+	                                exitDetail = true;
+	                            } else if (tabEingabe.equals("7")) {
+	                                return true;
+	                            } else {
+	                                try {
+	                                    int tabWahl = Integer.parseInt(tabEingabe);
+	                                    if (tabWahl >= 1 && tabWahl <= 5) {
+	                                        tab = tabWahl;
+	                                    }
+	                                } catch (NumberFormatException ex) {
+	                                    System.out.println("Ungültige Tab-Nummer!");
+	                                }
+	                            }
+	                        }
+	                    } else {
+	                        System.out.println("Kein Mitglied mit der eingegebenen MitgliederID gefunden.");
+	                    }
+	                } catch (NumberFormatException e) {
+	                    System.out.println("Bitte eine gültige MitgliederID eingeben!");
+	                }
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        System.out.println("Fehler bei der Mitgliedersuche: " + (e.getMessage() != null ? e.getMessage() : e));
+	    }
+	    return false;
 	}
 
-	private void showStammdaten(Mitglieder ausgewählt) {
+	public void showStammdaten(Mitglieder ausgewählt) {
 		String vorname = ausgewählt.getVorname() != null ? ausgewählt.getVorname() : "-";
 		String nachname = ausgewählt.getNachname() != null ? ausgewählt.getNachname() : "-";
 		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd.MM.yyyy");
@@ -174,6 +168,64 @@ public class MitgliederService extends BaseService {
 				vorname, nachname, geburtsdatum, alterJahre, geburtstagInfo, strasse, hausnr, plz, ort, tel, mail);
 	}
 
+	public void showMitgliedschaft(Mitglieder ausgewaehlt, VertragManager manager) throws Exception {
+	    List<MitgliederVertrag> vertraege = manager.getMitgliederVertragDAO().findByMitgliedId(ausgewaehlt.getMitgliederID());
+	    if (vertraege == null || vertraege.isEmpty()) {
+	        System.out.println("\nDas Mitglied hat keine Verträge.");
+	        return;
+	    }
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+	    Date heute = new Date();
+	    for (MitgliederVertrag mv : vertraege) {
+	        Vertrag v = manager.getVertragDAO().findById(mv.getVertragID());
+	        Intervall intervall = manager.getIntervallDAO().findById(mv.getIntervallID());
+	        double grundpreis = v.getGrundpreis();
+	        double preisrabatt = mv.getPreisrabatt();
+	        double wochenpreis = grundpreis - preisrabatt;
+	        int laufzeit = v.getLaufzeit();
+	        double gesamtwert = laufzeit * grundpreis;
+	        int wochenSeitVertragsstart = (int)((heute.getTime() - mv.getVertragsbeginn().getTime()) / (1000 * 60 * 60 * 24 * 7));
+	        double gezahlt = 0;
+	        switch (mv.getIntervallID()) {
+	            case 1:
+	                gezahlt = getWochenBisErster(heute, mv) * wochenpreis; break;
+	            case 2:
+	                gezahlt = getWochenBisLetzterVormonat(mv) * wochenpreis; break;
+	            case 3:
+	                gezahlt = wochenSeitVertragsstart * wochenpreis; break;
+	            case 4:
+	                gezahlt = ((wochenSeitVertragsstart % 2 == 0) ? wochenSeitVertragsstart : (wochenSeitVertragsstart - 1)) * wochenpreis; break;
+	        }
+	        double restwert = gesamtwert - gezahlt;
+	        double jeZahlungsintervall = 0;
+	        switch (mv.getIntervallID()) {
+	            case 1: case 2:
+	                jeZahlungsintervall = wochenpreis * 52.14 / 12.0; break;
+	            case 3: jeZahlungsintervall = wochenpreis; break;
+	            case 4: jeZahlungsintervall = wochenpreis * 2; break;
+	        }
+	        Date kuendbarBis = new Date(mv.getVertragsende().getTime() - 5L * 7L * 24L * 60L * 60L * 1000L);
+	        System.out.printf("\nVertragNr.: %d %s\n", mv.getVertragID(), v.getBezeichnung());
+	        System.out.printf("Laufzeit: %d Wochen Zahlungsintervall: %s\n", laufzeit, intervall.getBezeichnung());
+	        System.out.println("Trainingsbeginn | Vertragsbeginn | Vertragsende| Aktiv");
+	        System.out.printf("%-15s | %-15s | %-13s | %-5s\n",
+	                mv.getTrainingsbeginn() != null ? sdf.format(mv.getTrainingsbeginn()) : "-",
+	                mv.getVertragsbeginn() != null ? sdf.format(mv.getVertragsbeginn()) : "-",
+	                mv.getVertragsende() != null ? sdf.format(mv.getVertragsende()) : "-",
+	                (heute.compareTo(mv.getVertragsbeginn()) >= 0 && heute.compareTo(mv.getVertragsende()) <= 0) ? "X" : ""
+	        );
+	        System.out.printf("Grundpreis: %.2f € | Gesamtwert: %.2f €\n", grundpreis, gesamtwert);
+	        System.out.printf("Sonder-Rabatt: %.2f € | Gezahlt: %.2f €\n", preisrabatt, gezahlt);
+	        System.out.printf("Wochenpreis: %.2f € | Restwert: %.2f €\n", wochenpreis, restwert);
+	        System.out.printf("Je Zahlungsintervall: %.2f € | Kündbar bis: %s %s %s\n",
+	                jeZahlungsintervall,
+	                sdf.format(kuendbarBis),
+	                mv.isGekündigt() ? "Künd.X" : "",
+	                mv.isVerlängerung() ? "Verl.X" : ""
+	        );
+	    }
+	}
+	
 	private void interessentErstellen() {
 		System.out.println("Interessentenerstellung ausgewählt");
 		try {
@@ -317,4 +369,52 @@ public class MitgliederService extends BaseService {
 			e.printStackTrace();
 		}
 	}
+	
+
+	// Wochen vom Vertragsbeginn bis zum 1. des aktuellen Monats (wie im VertragService)
+	public int getWochenBisErster(Date today, MitgliederVertrag mv) {
+	    Datum beginn = new Datum(mv.getVertragsbeginn());
+	    Datum bis = new Datum(today);
+	    Datum erster = new Datum(bis.getJahr(), bis.getMonat(), 1);
+	    if (beginn.isBefore(erster)) {
+	        long millisekunden = ersterZuDate(erster).getTime() - mv.getVertragsbeginn().getTime();
+	        int tage = (int) (millisekunden / (1000 * 60 * 60 * 24));
+	        return Math.max(0, tage / 7);
+	    } else {
+	        return 0;
+	    }
+	}
+
+	// Wochen vom Vertragsbeginn bis zum letzten Tag des Vormonats (wie im VertragService)
+	public int getWochenBisLetzterVormonat(MitgliederVertrag mv) {
+	    Datum beginn = new Datum(mv.getVertragsbeginn());
+	    Datum heute = DatumHelper.getAktuellesDatum();
+	    int jahr = heute.getMonat() == 1 ? heute.getJahr() - 1 : heute.getJahr();
+	    int monat = heute.getMonat() == 1 ? 12 : heute.getMonat() - 1;
+	    java.util.Calendar cal = java.util.Calendar.getInstance();
+	    cal.set(jahr, monat - 1, 1);
+	    cal.set(java.util.Calendar.DAY_OF_MONTH, cal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH));
+	    Datum letzter = new Datum(cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH) + 1, cal.get(java.util.Calendar.DAY_OF_MONTH));
+	    if (beginn.isBefore(letzter)) {
+	        long millisekunden = letzterZuDate(letzter).getTime() - mv.getVertragsbeginn().getTime();
+	        int tage = (int) (millisekunden / (1000 * 60 * 60 * 24));
+	        return Math.max(0, tage / 7);
+	    } else {
+	        return 0;
+	    }
+	}
+
+	private Date ersterZuDate(Datum d) {
+	    java.util.Calendar cal = java.util.Calendar.getInstance();
+	    cal.set(d.getJahr(), d.getMonat() - 1, d.getTag(), 0, 0, 0);
+	    cal.set(java.util.Calendar.MILLISECOND, 0);
+	    return cal.getTime();
+	}
+	private Date letzterZuDate(Datum d) {
+	    java.util.Calendar cal = java.util.Calendar.getInstance();
+	    cal.set(d.getJahr(), d.getMonat() - 1, d.getTag(), 23, 59, 59);
+	    cal.set(java.util.Calendar.MILLISECOND, 999);
+	    return cal.getTime();
+	}
+
 }

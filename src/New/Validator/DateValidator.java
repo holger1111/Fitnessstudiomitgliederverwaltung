@@ -3,7 +3,7 @@ package New.Validator;
 import New.Exception.DateException;
 import New.Helper.DatumHelper;
 
-public class DateValidator extends Validator<Object> {
+public class DateValidator extends BaseValidator<Object> {
 
     @Override
     public void validate(Object obj) throws Exception {

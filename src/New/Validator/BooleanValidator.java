@@ -2,7 +2,7 @@ package New.Validator;
 
 import New.Exception.BooleanException;
 
-public class BooleanValidator extends Validator<Object> {
+public class BooleanValidator extends BaseValidator<Object> {
 
     @Override
     public void validate(Object obj) throws BooleanException {

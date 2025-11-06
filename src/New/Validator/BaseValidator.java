@@ -9,7 +9,7 @@ import New.Exception.TooShortException;
 import New.Exception.NotAllNecessaryDataEnteredException;
 import New.Exception.DataIsNullException;
 
-public abstract class Validator<T> {
+public abstract class BaseValidator<T> {
 
     // Liste, um Fehler zu speichern
     protected List<String> errors = new ArrayList<>();

@@ -3,7 +3,7 @@ package New.Validator;
 import New.Exception.PaymentDetailsException;
 import New.Exception.StringException;
 
-public class StringValidator extends Validator<Object> {
+public class StringValidator extends BaseValidator<Object> {
 
 	@Override
 	public void validate(Object obj) throws StringException, PaymentDetailsException {
