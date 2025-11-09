@@ -1,0 +1,23 @@
+| Merkmal                    | Spring Boot                                 | React                                    |
+|----------------------------|--------------------------------------------|-----------------------------------------|
+| Typ                        | Java Backend Framework                      | JavaScript Frontend Library              |
+| Lizenz                     | Open Source (Apache 2.0)                    | Open Source (MIT)                        |
+| Programmiersprache         | Java                                       | JavaScript / TypeScript                  |
+| Einsatzgebiet              | Erstellung von REST-APIs, Microservices    | Interaktive Benutzeroberflächen (Web)   |
+| Server                     | Integrierter Tomcat, Jetty, Undertow       | Läuft im Browser, Dev-Server lokal       |
+| Konfiguration              | Auto-Configuration, Spring Ecosystem       | Komponentenbasiert, JSX Templates        |
+| Datenbindung               | DTOs, JPA, Hibernate, Spring Data           | Props, State, Hooks, Context API         |
+| Routing                   | Spring MVC (Server-seitig)                   | React Router (Client-seitig)             |
+| Sicherheit                | Spring Security für Auth/Autorisation       | Externe Auth Libraries (z.B. Auth0)      |
+| Community                  | Sehr groß, viele Erweiterungen               | Sehr aktiv, sehr viele Libraries          |
+| Skalierbarkeit             | Hoch (Enterprise-geeignet)                   | Hoch (Einzelkomponenten modular)          |
+| Entwicklungsaufwand        | Mittel (Backend + REST APIs)                  | Mittel bis hoch (UI-Komplexität)          |
+| Testbarkeit               | Umfangreiche Test-Unterstützung (JUnit)      | Jest, Testing Library für UI-Tests       |
+| Build-Tools               | Maven, Gradle                               | NPM, Yarn, Webpack, Vite                 |
+| Integration              | Einfache Anbindung an Datenbanken, Services | Einfach REST-API Konsum durch Fetch/Axios|
+| Deployment               | Jar/War, Cloud Provider (z.B. Heroku, AWS)  | Statische Seiten/Server oder CDN          |
+| Vorteile                 | - Vollständiges Java Framework              | - Schnelle UI-Entwicklung                 |
+|                          | - Große Stabilität                           | - Große Ökosysteme                        |
+|                          | - Viele Sicherheitsoptionen                  | - Einfach zu lernen für Frontend-Spezialisten |
+| Nachteile                | - Java-Kenntnisse erforderlich               | - Nur UI (muss mit Backend verbunden werden) |
+|                          | - Backend-Logik notwendig                     | - JavaScript-Technologien ändern sich schnell |

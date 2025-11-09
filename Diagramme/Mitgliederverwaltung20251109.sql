@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mein-mysql
--- Erstellungszeit: 09. Nov 2025 um 14:23
+-- Erstellungszeit: 09. Nov 2025 um 20:16
 -- Server-Version: 9.4.0
 -- PHP-Version: 8.2.27
 
@@ -87,6 +87,27 @@ INSERT INTO `ArtikelBestellung` (`BestellungID`, `ArtikelID`, `Menge`, `Aufaddie
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `Benutzer`
+--
+
+CREATE TABLE `Benutzer` (
+  `BenutzerID` int NOT NULL,
+  `Benutzername` varchar(100) NOT NULL,
+  `Passwort` varchar(255) NOT NULL,
+  `RolleID` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Daten für Tabelle `Benutzer`
+--
+
+INSERT INTO `Benutzer` (`BenutzerID`, `Benutzername`, `Passwort`, `RolleID`) VALUES
+(1, 'Holger', '123', 4),
+(2, 'Holger2', '123', 5);
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `Bestellung`
 --
 
@@ -95,22 +116,23 @@ CREATE TABLE `Bestellung` (
   `MitgliederID` int DEFAULT NULL,
   `Gesamtpreis` decimal(6,2) DEFAULT NULL,
   `Bestelldatum` timestamp NULL DEFAULT NULL,
-  `ZahlungID` int DEFAULT NULL
+  `ZahlungID` int DEFAULT NULL,
+  `MitarbeiterID` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Daten für Tabelle `Bestellung`
 --
 
-INSERT INTO `Bestellung` (`BestellungID`, `MitgliederID`, `Gesamtpreis`, `Bestelldatum`, `ZahlungID`) VALUES
-(1, 3, 19.49, '2025-10-27 12:30:12', 1),
-(2, 4, 4.50, '2025-10-27 12:31:54', 1),
-(3, 2, 9.50, '2025-10-27 12:43:24', 2),
-(4, 1, 9.99, '2025-10-27 12:59:59', 2),
-(5, 3, 33.99, '2025-11-06 15:14:02', 2),
-(6, 1, 9.50, '2025-11-07 09:38:18', 2),
-(7, 2, 18.00, '2025-11-09 15:20:43', 2),
-(8, 1, 10.00, '2025-11-09 15:22:42', 3);
+INSERT INTO `Bestellung` (`BestellungID`, `MitgliederID`, `Gesamtpreis`, `Bestelldatum`, `ZahlungID`, `MitarbeiterID`) VALUES
+(1, 3, 19.49, '2025-10-27 12:30:12', 1, 1),
+(2, 4, 4.50, '2025-10-27 12:31:54', 1, 1),
+(3, 2, 9.50, '2025-10-27 12:43:24', 2, 1),
+(4, 1, 9.99, '2025-10-27 12:59:59', 2, 1),
+(5, 3, 33.99, '2025-11-06 15:14:02', 2, 1),
+(6, 1, 9.50, '2025-11-07 09:38:18', 2, 1),
+(7, 2, 18.00, '2025-11-09 15:20:43', 2, 1),
+(8, 1, 10.00, '2025-11-09 15:22:42', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -185,6 +207,37 @@ INSERT INTO `Kurs` (`KursID`, `Bezeichnung`, `Kostenfrei`, `Aktiv`, `Teilnehmerz
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `Kursleitung`
+--
+
+CREATE TABLE `Kursleitung` (
+  `KursterminID` int NOT NULL,
+  `MitarbeiterID` int NOT NULL,
+  `Bestätigt` tinyint(1) DEFAULT NULL,
+  `Bestätigungszeit` timestamp NULL DEFAULT NULL,
+  `Abgemeldet` tinyint(1) DEFAULT NULL,
+  `Abmeldezeit` timestamp NULL DEFAULT NULL,
+  `Aktiv` tinyint(1) DEFAULT NULL,
+  `Kommentar` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Daten für Tabelle `Kursleitung`
+--
+
+INSERT INTO `Kursleitung` (`KursterminID`, `MitarbeiterID`, `Bestätigt`, `Bestätigungszeit`, `Abgemeldet`, `Abmeldezeit`, `Aktiv`, `Kommentar`) VALUES
+(1, 1, 1, '2025-10-02 00:00:00', 0, NULL, 1, ''),
+(2, 1, 1, '2025-10-02 00:00:00', 0, NULL, 1, ''),
+(3, 1, 1, '2025-10-02 00:00:00', 0, NULL, 1, ''),
+(4, 1, 1, '2025-10-02 00:00:00', 0, NULL, 1, ''),
+(5, 1, 1, '2025-10-02 00:00:00', 0, NULL, 1, ''),
+(6, 1, 1, '2025-10-02 00:00:00', 0, NULL, 1, ''),
+(7, 1, 1, '2025-10-02 00:00:00', 0, NULL, 1, ''),
+(8, 1, 1, '2025-10-02 00:00:00', 0, NULL, 1, '');
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `Kursteilnahme`
 --
 
@@ -224,9 +277,8 @@ CREATE TABLE `Kurstermin` (
   `KursterminID` int NOT NULL,
   `KursID` int DEFAULT NULL,
   `Termin` datetime DEFAULT NULL,
-  `TrainerID` int DEFAULT NULL,
   `Teilnehmerfrei` int DEFAULT NULL,
-  `Anmeldbar` tinyint(1) DEFAULT '1' COMMENT 'Gibt an, ob der Kurs noch freie Plätze hat (true/false)',
+  `Anmeldebar` tinyint(1) DEFAULT '1' COMMENT 'Gibt an, ob der Kurs noch freie Plätze hat (true/false)',
   `Aktiv` tinyint(1) DEFAULT '1' COMMENT 'Gibt an, ob der Kurstermin stattfindet (true/false)',
   `Kommentar` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -235,15 +287,44 @@ CREATE TABLE `Kurstermin` (
 -- Daten für Tabelle `Kurstermin`
 --
 
-INSERT INTO `Kurstermin` (`KursterminID`, `KursID`, `Termin`, `TrainerID`, `Teilnehmerfrei`, `Anmeldbar`, `Aktiv`, `Kommentar`) VALUES
-(1, 1, '2025-10-27 18:00:00', 1, 11, 1, 1, NULL),
-(2, 2, '2025-10-28 18:30:00', 2, 3, 1, 1, NULL),
-(3, 3, '2025-10-28 19:45:00', 2, 0, 0, 1, NULL),
-(4, 4, '2025-10-29 10:00:00', 1, 2, 1, 1, NULL),
-(5, 1, '2025-11-03 18:00:00', 1, 21, 1, 1, NULL),
-(6, 2, '2025-11-04 18:30:00', 2, 13, 1, 1, NULL),
-(7, 3, '2025-11-04 19:45:00', 2, 0, 0, 1, NULL),
-(8, 4, '2025-11-05 10:00:00', 1, 6, 1, 1, NULL);
+INSERT INTO `Kurstermin` (`KursterminID`, `KursID`, `Termin`, `Teilnehmerfrei`, `Anmeldebar`, `Aktiv`, `Kommentar`) VALUES
+(1, 1, '2025-10-27 18:00:00', 11, 1, 1, NULL),
+(2, 2, '2025-10-28 18:30:00', 3, 1, 1, NULL),
+(3, 3, '2025-10-28 19:45:00', 0, 0, 1, NULL),
+(4, 4, '2025-10-29 10:00:00', 2, 1, 1, NULL),
+(5, 1, '2025-11-03 18:00:00', 21, 1, 1, NULL),
+(6, 2, '2025-11-04 18:30:00', 13, 1, 1, NULL),
+(7, 3, '2025-11-04 19:45:00', 0, 0, 1, NULL),
+(8, 4, '2025-11-05 10:00:00', 6, 1, 1, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `Mitarbeiter`
+--
+
+CREATE TABLE `Mitarbeiter` (
+  `MitarbeiterID` int NOT NULL,
+  `Vorname` varchar(255) NOT NULL,
+  `Nachname` varchar(255) NOT NULL,
+  `Geburtsdatum` date DEFAULT NULL,
+  `Aktiv` tinyint(1) DEFAULT NULL,
+  `Straße` varchar(255) DEFAULT NULL,
+  `Hausnr` varchar(10) DEFAULT NULL,
+  `OrtID` int DEFAULT NULL,
+  `ZahlungsdatenID` int DEFAULT NULL,
+  `Telefon` varchar(20) DEFAULT NULL,
+  `Mail` varchar(255) DEFAULT NULL,
+  `BenutzerID` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Daten für Tabelle `Mitarbeiter`
+--
+
+INSERT INTO `Mitarbeiter` (`MitarbeiterID`, `Vorname`, `Nachname`, `Geburtsdatum`, `Aktiv`, `Straße`, `Hausnr`, `OrtID`, `ZahlungsdatenID`, `Telefon`, `Mail`, `BenutzerID`) VALUES
+(1, 'Holger', 'Braun', '1991-09-16', 0, 'Berggasse', '12c', 1, 16, '1231241242342', 'oasdfhsa@fsdgsd.de', 1),
+(3, 'Holger', 'Braun', '1991-09-16', 0, 'Berggasse', '12c', 1, 16, '1231241242342', 'oasdfhsa@fsdgsd.de', 2);
 
 -- --------------------------------------------------------
 
@@ -275,7 +356,12 @@ INSERT INTO `Mitglieder` (`MitgliederID`, `Vorname`, `Nachname`, `Geburtsdatum`,
 (3, 'Lisa-Marie', 'Störm', '2009-01-31', 1, 'Seeweg', '3', 2, 2, '0494863492135', 'princesslie@alo-mail.de'),
 (4, 'Anne-Liese', 'Kreier', '2008-12-02', 1, 'Auenbachstraße', '109', 2, 3, '049573489128', 'lakreier@kreier-professionals.de'),
 (5, 'Markus', 'Mayer', '1990-07-17', 1, 'Bachstraße', '4', 3, 4, '0498576432973674', 'mm@inkasso-stolz.de'),
-(18, 'Holger', 'Braun', '1900-01-01', 0, 'Holgerstr.', '12a', 21, 16, '4353453534', 'ef34f4t@g544g4g.d4');
+(18, 'Holger', 'Braun', '1900-01-01', 0, 'Holgerstr.', '12a', 21, 16, '4353453534', 'ef34f4t@g544g4g.d4'),
+(19, 'John', 'Doe', NULL, 0, NULL, NULL, NULL, NULL, '109248932423', NULL),
+(20, 'Kuhl', 'Kave', NULL, 0, NULL, NULL, NULL, NULL, '23437556756', NULL),
+(21, 'Kim', 'Kardashion', NULL, 0, NULL, NULL, NULL, NULL, '2094579345', NULL),
+(22, 'Kim', 'Loe', NULL, 0, NULL, NULL, NULL, NULL, '2545656', NULL),
+(23, '1212', '1212', NULL, 0, NULL, NULL, NULL, NULL, '121212', NULL);
 
 -- --------------------------------------------------------
 
@@ -296,6 +382,7 @@ CREATE TABLE `MitgliederVertrag` (
   `IntervallID` int DEFAULT NULL,
   `ZahlungID` int DEFAULT NULL,
   `Trainingsbeginn` date DEFAULT NULL,
+  `MitarbeiterID` int DEFAULT NULL,
   `Kommentar` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -303,13 +390,13 @@ CREATE TABLE `MitgliederVertrag` (
 -- Daten für Tabelle `MitgliederVertrag`
 --
 
-INSERT INTO `MitgliederVertrag` (`VertragNr`, `MitgliederID`, `VertragID`, `Vertragsbeginn`, `Vertragsende`, `Verlängerung`, `Aktiv`, `Gekündigt`, `Preisrabatt`, `IntervallID`, `ZahlungID`, `Trainingsbeginn`, `Kommentar`) VALUES
-(1, 1, 2, '2024-10-12', '2026-10-13', 1, 1, 0, 2.50, 3, 2, '2024-09-12', 'Vereinsfunktionär, bekommt extra Rabatt von 2,50€'),
-(2, 2, 1, '2024-12-31', '2026-01-01', 0, 1, 0, NULL, 4, 2, '2024-12-01', 'Mutter von Lisa-Marie Störm'),
-(3, 3, 3, '2024-12-31', '2026-01-01', 0, 1, 0, 1.50, 4, 2, '2024-12-01', 'Tochter von Celicia Störm, hat Anne-Liese Kreier geworben, daher 1,50 € Rabatt'),
-(4, 4, 3, '2025-02-15', '2026-02-16', 0, 1, 0, NULL, 4, 2, '2025-02-01', 'Geworben von Celicia Störm'),
-(5, 5, 1, '2025-10-26', '2026-10-27', 0, 1, 0, NULL, 4, 1, '2025-10-06', NULL),
-(8, 18, 1, '2025-12-01', '2026-11-30', 0, 1, 0, 1.50, 3, 4, '2025-11-07', 'Alter');
+INSERT INTO `MitgliederVertrag` (`VertragNr`, `MitgliederID`, `VertragID`, `Vertragsbeginn`, `Vertragsende`, `Verlängerung`, `Aktiv`, `Gekündigt`, `Preisrabatt`, `IntervallID`, `ZahlungID`, `Trainingsbeginn`, `MitarbeiterID`, `Kommentar`) VALUES
+(1, 1, 2, '2024-10-12', '2026-10-13', 1, 1, 0, 2.50, 3, 2, '2024-09-12', 1, 'Vereinsfunktionär, bekommt extra Rabatt von 2,50€'),
+(2, 2, 1, '2024-12-31', '2026-01-01', 0, 1, 0, NULL, 4, 2, '2024-12-01', 1, 'Mutter von Lisa-Marie Störm'),
+(3, 3, 3, '2024-12-31', '2026-01-01', 0, 1, 0, 1.50, 4, 2, '2024-12-01', 1, 'Tochter von Celicia Störm, hat Anne-Liese Kreier geworben, daher 1,50 € Rabatt'),
+(4, 4, 3, '2025-02-15', '2026-02-16', 0, 1, 0, NULL, 4, 2, '2025-02-01', 1, 'Geworben von Celicia Störm'),
+(5, 5, 1, '2025-10-26', '2026-10-27', 0, 1, 0, NULL, 4, 1, '2025-10-06', 1, NULL),
+(8, 18, 1, '2025-12-01', '2026-11-30', 0, 1, 0, 1.50, 3, 4, '2025-11-07', 1, 'Alter');
 
 -- --------------------------------------------------------
 
@@ -337,23 +424,25 @@ INSERT INTO `Ort` (`OrtID`, `PLZ`, `Ort`) VALUES
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `Trainer`
+-- Tabellenstruktur für Tabelle `Rolle`
 --
 
-CREATE TABLE `Trainer` (
-  `TrainerID` int NOT NULL,
-  `Vorname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `Nachname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `Kommentar` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE `Rolle` (
+  `RolleID` int NOT NULL,
+  `Bezeichnung` varchar(255) NOT NULL,
+  `Kommentar` longtext
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Daten für Tabelle `Trainer`
+-- Daten für Tabelle `Rolle`
 --
 
-INSERT INTO `Trainer` (`TrainerID`, `Vorname`, `Nachname`, `Kommentar`) VALUES
-(1, 'Holger', 'Braun', NULL),
-(2, 'Cecilia', 'Petters', NULL);
+INSERT INTO `Rolle` (`RolleID`, `Bezeichnung`, `Kommentar`) VALUES
+(1, 'Trainer', 'Kann nur Kursdaten sehen.'),
+(2, 'Mitarbeiter', 'Kann Kurs-, Mitglieder- und Verkaufsdaten sehen, für Kurse an- und abmelden, Interessenten anlegen und Artikel verkaufen.'),
+(3, 'Verkäufer', 'Kann Kurs-, Mitglieder-, Verkaufs- und Vertragsdaten sehen, für Kurse an- und abmelden, Interessenten und Mitglieder anlegen, Artikel verkaufen und Mitglidschaftsverträge abschließen.'),
+(4, 'Verwaltung', 'Kann alle Daten sehen, alle Aktivitäten wie die anderen Rollen ausführen und zusätzlich neue Mitarbeiter, Neue Kurse, Kurstermine, Intervalle, Verträge, Artikel und Kategorien anlegen.'),
+(5, 'Admin', 'Kann alles sehen, alles machen und alles anlegen, bearbeiten und löschen.');
 
 -- --------------------------------------------------------
 
@@ -376,7 +465,8 @@ INSERT INTO `Vertrag` (`VertragID`, `Bezeichnung`, `Laufzeit`, `Grundpreis`) VAL
 (1, '12-Monat-Standard', 52, 9.50),
 (2, '24-Monat-Standard', 104, 7.50),
 (3, '12-Monat-Jugend', 52, 6.50),
-(4, '24-Monat-Jugend', 104, 5.50);
+(4, '24-Monat-Jugend', 104, 5.50),
+(5, NULL, 0, 0.00);
 
 -- --------------------------------------------------------
 
@@ -442,12 +532,21 @@ ALTER TABLE `ArtikelBestellung`
   ADD KEY `ArtikelID` (`ArtikelID`);
 
 --
+-- Indizes für die Tabelle `Benutzer`
+--
+ALTER TABLE `Benutzer`
+  ADD PRIMARY KEY (`BenutzerID`),
+  ADD UNIQUE KEY `Benutzername` (`Benutzername`),
+  ADD KEY `FK_Benutzer_Rolle` (`RolleID`);
+
+--
 -- Indizes für die Tabelle `Bestellung`
 --
 ALTER TABLE `Bestellung`
   ADD PRIMARY KEY (`BestellungID`),
   ADD KEY `MitgliederID` (`MitgliederID`),
-  ADD KEY `ZahlungID` (`ZahlungID`);
+  ADD KEY `ZahlungID` (`ZahlungID`),
+  ADD KEY `fk_Mitarbeiter2` (`MitarbeiterID`);
 
 --
 -- Indizes für die Tabelle `Intervall`
@@ -468,6 +567,13 @@ ALTER TABLE `Kurs`
   ADD PRIMARY KEY (`KursID`);
 
 --
+-- Indizes für die Tabelle `Kursleitung`
+--
+ALTER TABLE `Kursleitung`
+  ADD PRIMARY KEY (`KursterminID`,`MitarbeiterID`),
+  ADD KEY `MitarbeiterID` (`MitarbeiterID`);
+
+--
 -- Indizes für die Tabelle `Kursteilnahme`
 --
 ALTER TABLE `Kursteilnahme`
@@ -479,8 +585,16 @@ ALTER TABLE `Kursteilnahme`
 --
 ALTER TABLE `Kurstermin`
   ADD PRIMARY KEY (`KursterminID`),
-  ADD KEY `KursID` (`KursID`),
-  ADD KEY `TrainerID` (`TrainerID`);
+  ADD KEY `KursID` (`KursID`);
+
+--
+-- Indizes für die Tabelle `Mitarbeiter`
+--
+ALTER TABLE `Mitarbeiter`
+  ADD PRIMARY KEY (`MitarbeiterID`),
+  ADD KEY `OrtID` (`OrtID`),
+  ADD KEY `ZahlungsdatenID` (`ZahlungsdatenID`),
+  ADD KEY `FK_Mitarbeiter_Benutzer` (`BenutzerID`);
 
 --
 -- Indizes für die Tabelle `Mitglieder`
@@ -498,7 +612,8 @@ ALTER TABLE `MitgliederVertrag`
   ADD KEY `MitgliederID` (`MitgliederID`),
   ADD KEY `VertragID` (`VertragID`),
   ADD KEY `ZahlungID` (`ZahlungID`),
-  ADD KEY `IntervallID` (`IntervallID`);
+  ADD KEY `IntervallID` (`IntervallID`),
+  ADD KEY `fk_Mitarbeiter` (`MitarbeiterID`);
 
 --
 -- Indizes für die Tabelle `Ort`
@@ -507,10 +622,10 @@ ALTER TABLE `Ort`
   ADD PRIMARY KEY (`OrtID`);
 
 --
--- Indizes für die Tabelle `Trainer`
+-- Indizes für die Tabelle `Rolle`
 --
-ALTER TABLE `Trainer`
-  ADD PRIMARY KEY (`TrainerID`);
+ALTER TABLE `Rolle`
+  ADD PRIMARY KEY (`RolleID`);
 
 --
 -- Indizes für die Tabelle `Vertrag`
@@ -539,6 +654,12 @@ ALTER TABLE `Zahlungsdaten`
 --
 ALTER TABLE `Artikel`
   MODIFY `ArtikelID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT für Tabelle `Benutzer`
+--
+ALTER TABLE `Benutzer`
+  MODIFY `BenutzerID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT für Tabelle `Bestellung`
@@ -571,10 +692,16 @@ ALTER TABLE `Kurstermin`
   MODIFY `KursterminID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT für Tabelle `Mitarbeiter`
+--
+ALTER TABLE `Mitarbeiter`
+  MODIFY `MitarbeiterID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT für Tabelle `Mitglieder`
 --
 ALTER TABLE `Mitglieder`
-  MODIFY `MitgliederID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `MitgliederID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT für Tabelle `MitgliederVertrag`
@@ -589,16 +716,16 @@ ALTER TABLE `Ort`
   MODIFY `OrtID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
--- AUTO_INCREMENT für Tabelle `Trainer`
+-- AUTO_INCREMENT für Tabelle `Rolle`
 --
-ALTER TABLE `Trainer`
-  MODIFY `TrainerID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `Rolle`
+  MODIFY `RolleID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT für Tabelle `Vertrag`
 --
 ALTER TABLE `Vertrag`
-  MODIFY `VertragID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `VertragID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT für Tabelle `Zahlung`
@@ -630,11 +757,25 @@ ALTER TABLE `ArtikelBestellung`
   ADD CONSTRAINT `artikelbestellung_ibfk_2` FOREIGN KEY (`ArtikelID`) REFERENCES `Artikel` (`ArtikelID`) ON DELETE CASCADE;
 
 --
+-- Constraints der Tabelle `Benutzer`
+--
+ALTER TABLE `Benutzer`
+  ADD CONSTRAINT `FK_Benutzer_Rolle` FOREIGN KEY (`RolleID`) REFERENCES `Rolle` (`RolleID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
 -- Constraints der Tabelle `Bestellung`
 --
 ALTER TABLE `Bestellung`
   ADD CONSTRAINT `bestellung_ibfk_1` FOREIGN KEY (`MitgliederID`) REFERENCES `Mitglieder` (`MitgliederID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `bestellung_ibfk_2` FOREIGN KEY (`ZahlungID`) REFERENCES `Zahlung` (`ZahlungID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `bestellung_ibfk_2` FOREIGN KEY (`ZahlungID`) REFERENCES `Zahlung` (`ZahlungID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_Mitarbeiter2` FOREIGN KEY (`MitarbeiterID`) REFERENCES `Mitarbeiter` (`MitarbeiterID`);
+
+--
+-- Constraints der Tabelle `Kursleitung`
+--
+ALTER TABLE `Kursleitung`
+  ADD CONSTRAINT `kursleitung_ibfk_1` FOREIGN KEY (`KursterminID`) REFERENCES `Kurstermin` (`KursterminID`),
+  ADD CONSTRAINT `kursleitung_ibfk_2` FOREIGN KEY (`MitarbeiterID`) REFERENCES `Mitarbeiter` (`MitarbeiterID`);
 
 --
 -- Constraints der Tabelle `Kursteilnahme`
@@ -647,8 +788,15 @@ ALTER TABLE `Kursteilnahme`
 -- Constraints der Tabelle `Kurstermin`
 --
 ALTER TABLE `Kurstermin`
-  ADD CONSTRAINT `kurstermin_ibfk_1` FOREIGN KEY (`KursID`) REFERENCES `Kurs` (`KursID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `kurstermin_ibfk_2` FOREIGN KEY (`TrainerID`) REFERENCES `Trainer` (`TrainerID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `kurstermin_ibfk_1` FOREIGN KEY (`KursID`) REFERENCES `Kurs` (`KursID`) ON DELETE CASCADE;
+
+--
+-- Constraints der Tabelle `Mitarbeiter`
+--
+ALTER TABLE `Mitarbeiter`
+  ADD CONSTRAINT `FK_Mitarbeiter_Benutzer` FOREIGN KEY (`BenutzerID`) REFERENCES `Benutzer` (`BenutzerID`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `mitarbeiter_ibfk_1` FOREIGN KEY (`OrtID`) REFERENCES `Ort` (`OrtID`),
+  ADD CONSTRAINT `mitarbeiter_ibfk_2` FOREIGN KEY (`ZahlungsdatenID`) REFERENCES `Zahlungsdaten` (`ZahlungsdatenID`);
 
 --
 -- Constraints der Tabelle `Mitglieder`
@@ -661,6 +809,7 @@ ALTER TABLE `Mitglieder`
 -- Constraints der Tabelle `MitgliederVertrag`
 --
 ALTER TABLE `MitgliederVertrag`
+  ADD CONSTRAINT `fk_Mitarbeiter` FOREIGN KEY (`MitarbeiterID`) REFERENCES `Mitarbeiter` (`MitarbeiterID`),
   ADD CONSTRAINT `mitgliedervertrag_ibfk_1` FOREIGN KEY (`MitgliederID`) REFERENCES `Mitglieder` (`MitgliederID`) ON DELETE CASCADE,
   ADD CONSTRAINT `mitgliedervertrag_ibfk_2` FOREIGN KEY (`VertragID`) REFERENCES `Vertrag` (`VertragID`) ON DELETE CASCADE,
   ADD CONSTRAINT `mitgliedervertrag_ibfk_3` FOREIGN KEY (`ZahlungID`) REFERENCES `Zahlung` (`ZahlungID`) ON DELETE CASCADE,
